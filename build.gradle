@@ -31,8 +31,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-}
 
-tasks.named('test') {
-	useJUnitPlatform()
+	// Swagger 의존성 추가
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
 }
