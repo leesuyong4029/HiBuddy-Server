@@ -1,0 +1,58 @@
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/hi_buddy
+    username: root
+    password: ooys91192
+
+
+security:
+  oauth2:
+    client:
+      registration:
+        kakao:
+          clientId: badeb291be382d61336b18b4b854874b
+          clientSecret: KtZJrjxqSA7uCtsz69pPGXkMg1q1wooa
+          redirectUri: http://localhost:8080/hibuddy/v1/auth/kakao/login
+          authorizationGrantType: authorization_code
+          scope: email
+          clientName: Hi Buddy
+        provider:
+          kakao:
+            authorizationUri: https://kauth.kakao.com/oauth/authorize
+            tokenUri: https://kauth.kakao.com/oauth/token
+            userInfoUri: https://kapi.kakao.com/v2/user/me
+            userNameAttribute: id
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+
+
+  logging:
+    level:
+      org.hibernate.SQL: debug
+jwt:
+  issuer: paul9119298@gmail.com
+  secret_key: Hi_Buddy
+  access:
+    token:
+      expiration:
+        seconds: 3600
+  refresh:
+    token:
+      expiration:
+        seconds: 604800

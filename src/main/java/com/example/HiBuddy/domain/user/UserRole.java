@@ -1,4 +1,5 @@
 package com.example.HiBuddy.domain.user;
 
-public class Users {
+public enum UserRole {
+    USER, ADMIN;
 }
