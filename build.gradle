@@ -32,8 +32,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	// gson 라이브러리
 	implementation 'com.google.code.gson:gson:2.10.1'
-	// webclient 라이브러리
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	// Jpa 라이브러리
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	// validation
@@ -47,7 +45,9 @@ dependencies {
 	// OAuth2.0
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	// Jwt
-	implementation "io.jsonwebtoken:jjwt:0.9.1"
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 	// Swagger 의존성 추가
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
