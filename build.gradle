@@ -22,16 +22,32 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-
+	// gson 라이브러리
+	implementation 'com.google.code.gson:gson:2.10.1'
+	// webclient 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	// Jpa 라이브러리
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// validation
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.1'
+	// my sql
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	// Spring Boot Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation "org.springframework.security:spring-security-web"
+	implementation "org.springframework.security:spring-security-config"
+	// OAuth2.0
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	// Jwt
+	implementation "io.jsonwebtoken:jjwt:0.9.1"
 	// Swagger 의존성 추가
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
@@ -39,3 +55,4 @@ dependencies {
 		useJUnitPlatform()
 	}
 }
+
