@@ -6,18 +6,18 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("hibuddy/v1/users")
-public class UserController {
+public class UsersController {
 
-    private final UserService userService;
+    private final UsersService usersService;
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UsersController(UsersService usersService) {
+        this.usersService = usersService;
     }
 
     @PatchMapping("/{id}/nickname")
-    public ResponseEntity<User> updateNickname(@PathVariable Long id, @RequestBody UpdateNicknameRequest request) {
-        User updatedUser = userService.updateNickname(id, request.getNickname());
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<Users> updateNickname(@PathVariable Long id, @RequestBody UpdateNicknameRequest request) {
+        Users updatedUsers = usersService.updateNickname(id, request.getNickname());
+        return ResponseEntity.ok(updatedUsers);
     }
     private static class UpdateNicknameRequest {
         private String nickname;

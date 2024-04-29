@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
-public class User implements UserDetails {
+public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", unique = true, nullable = false)
@@ -42,19 +42,18 @@ public class User implements UserDetails {
     @Column
     private String nickname;
 
-    @Enumerated(value = EnumType.STRING)
-    private UserRole userRole;
-
     @CreationTimestamp
     private Timestamp created_at;
 
     @UpdateTimestamp
     private Timestamp updated_at;
 
-    @Column
+    @Column(unique = true, nullable = false)
     private String email;
 
     private String oauth;
+
+    private String refreshToken;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -92,15 +91,18 @@ public class User implements UserDetails {
     }
 
     @Builder
-    public User(String nickname, String country, String major){
+    public Users(String nickname, String country, String major){
         this.nickname=nickname;
         this.country=country;
         this.major=major;
     }
-    public User update(String nickname) {
+    public Users update(String nickname) {
         this.nickname = nickname;
 
         return this;
     }
 
+    public void updateRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
+    }
 }
