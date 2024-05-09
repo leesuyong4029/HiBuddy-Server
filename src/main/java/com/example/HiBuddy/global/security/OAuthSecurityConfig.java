@@ -1,4 +1,4 @@
-package com.example.HiBuddy.domain.oauth.configuration;
+package com.example.HiBuddy.global.security;
 
 import com.example.HiBuddy.domain.oauth.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -35,14 +36,9 @@ public class OAuthSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 방식 x, oauth jwt ok
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/","/hibuddy/v1/auth/**").permitAll()
+                        .requestMatchers("/hibuddy/v1/auth/**").permitAll()
                         .requestMatchers("/hibuddy/v1/auth/user/**").authenticated() // 유저 페이지는 권한이 있어야 댐
                         .anyRequest().permitAll())
-                /*.oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(endpoint -> endpoint.baseUri("www.naver.com"))
-                        .redirectionEndpoint(endpoint -> endpoint.baseUri("/hibuddy/v1/auth/callback/*"))
-                        .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
-                )*/
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 필터 등록
                 /*.exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new FailedAuthenticationEntryPoint())); // 실패시 에러 처리*/

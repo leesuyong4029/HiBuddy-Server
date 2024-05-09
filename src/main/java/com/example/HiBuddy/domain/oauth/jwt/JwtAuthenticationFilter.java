@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(userEmail==null){
                 filterChain.doFilter(request,response); return;
             }
-            Optional<Users> users = usersRepository.findByEmail(userEmail);
 
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext(); // 빈 context 만들어줌
             AbstractAuthenticationToken authenticationToken =
