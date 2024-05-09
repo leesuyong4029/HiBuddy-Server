@@ -35,10 +35,6 @@ public class Users implements UserDetails {
     @Column
     private boolean status;
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     @Column
     private String nickname;
 
@@ -53,6 +49,7 @@ public class Users implements UserDetails {
 
     private String oauth;
 
+    @Column
     private String refreshToken;
 
     @Override
@@ -90,19 +87,20 @@ public class Users implements UserDetails {
         return true; // true -> 사용 가능
     }
 
-    @Builder
-    public Users(String nickname, String country, String major){
-        this.nickname=nickname;
-        this.country=country;
-        this.major=major;
-    }
+
     public Users update(String nickname) {
         this.nickname = nickname;
 
         return this;
     }
 
+    public Users(String email, String oauth){
+        this.email = email;
+        this.oauth = oauth;
+    }
+
     public void updateRefreshToken(String refreshToken){
+        System.out.println("helo");
         this.refreshToken = refreshToken;
     }
 }

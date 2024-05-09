@@ -20,16 +20,16 @@ import java.util.function.Consumer;
 public class KakaoProvider {
     public static final String GRANT_TYPE = "authorization_code";
 
-    @Value("${security.oauth2.client.registration.kakao.clientId}")
+    @Value("${spring.security.oauth2.client.registration.kakao.clientId}")
     private String clientId;
 
-    @Value("${security.oauth2.client.registration.kakao.redirectUri}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirectUri}")
     private String redirectUri;
 
-    @Value("${security.oauth2.client.registration.provider.kakao.tokenUri}")
+    @Value("${spring.security.oauth2.client.provider.kakao.tokenUri}")
     private String tokenRequestUri;
 
-    @Value("${security.oauth2.client.registration.provider.kakao.userInfoUri}")
+    @Value("${spring.security.oauth2.client.provider.kakao.userInfoUri}")
     private String userInfoUri;
     private final String contentType = "application/x-www-form-urlencoded;charset=utf-8";
     private final RestClient restClient=RestClient.create();

@@ -21,6 +21,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Users
     USER_EXISTS_NICKNAME(HttpStatus.BAD_REQUEST, "USER401", "중복된 닉네임입니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER404", "유저를 찾을 수 없습니다."),
 
     // Posts
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST401", "게시글을 찾을 수 없습니다."),
