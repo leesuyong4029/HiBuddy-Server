@@ -30,7 +30,7 @@ public class UsersController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER404", description = "유저가 존재하지 않습니다", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
-    public ApiResponse<SuccessStatus> updateUserNickname(@AuthenticationPrincipal UserDetails user, @RequestBody UserRequestDto.UserNicknameDto userNicknameDto) {
+    public ApiResponse<SuccessStatus> updateUserNickname(@AuthenticationPrincipal UserDetails user, @RequestBody UsersRequestDto.UserNicknameDto userNicknameDto) {
         usersService.updateUserNickname(usersService.getUserId(user), userNicknameDto);
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }

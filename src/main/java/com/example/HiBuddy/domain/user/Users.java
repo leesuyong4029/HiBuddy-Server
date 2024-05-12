@@ -1,10 +1,8 @@
 package com.example.HiBuddy.domain.user;
 
+import com.example.HiBuddy.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,12 +17,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Data
-public class Users implements UserDetails {
+@Getter
+@Setter
+public class Users extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", unique = true, nullable = false)
     private Long id;
+
+    @Column
+    private String username;
 
     @Column // enum으로 조져도 됨
     private String country;
@@ -38,69 +40,22 @@ public class Users implements UserDetails {
     @Column
     private String nickname;
 
-    @CreationTimestamp
-    private Timestamp created_at;
-
-    @UpdateTimestamp
-    private Timestamp updated_at;
-
     @Column(unique = true, nullable = false)
     private String email;
 
-    private String oauth;
+    // provider : google이 들어감
+    private String provider;
 
-    @Column
-    private String refreshToken;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("USER"));
-    }
-
-    @Override
-    public String getPassword() {
-        return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return null;
-    }
-
-    @Override // 계정 만료 여부
-    public boolean isAccountNonExpired() {
-        return true; // true -> 만료되지 않음
-    }
-
-    @Override // 계중 잠금 여부 반환
-    public boolean isAccountNonLocked() {
-        return true; // true -> 잠금되지 않음
-    }
-
-    @Override // 패스워드의 만료 여부 반환
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override // 계정이 사용 가능한지 확인하는 로직
-    public boolean isEnabled() {
-        return true; // true -> 사용 가능
-    }
-
+    // providerId : 구굴 로그인 한 유저의 고유 ID가 들어감
+    private String providerId;
 
     public Users update(String nickname) {
         this.nickname = nickname;
-
         return this;
     }
 
     public Users(String email, String oauth){
         this.email = email;
-        this.oauth = oauth;
     }
 
-    public void updateRefreshToken(String refreshToken){
-        System.out.println("helo");
-        this.refreshToken = refreshToken;
-    }
 }

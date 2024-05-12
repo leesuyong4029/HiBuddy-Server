@@ -1,6 +1,7 @@
 package com.example.HiBuddy.global.security;
 
 import com.example.HiBuddy.domain.user.Users;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,13 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
     private final Users user;
-
-    public UserDetailsImpl(Users user) {
-
-        this.user = user;
-    }
 
     // 현재 권한은 user만 있음
     @Override
@@ -23,14 +20,16 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
     public String getUsername() {
         return user.getEmail();
     }
 
-    @Override
-    public String getPassword(){
-        return user.getPassword();
-    }
+
 
     @Override
     public boolean isAccountNonExpired() {

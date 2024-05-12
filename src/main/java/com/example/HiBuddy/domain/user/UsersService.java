@@ -28,7 +28,7 @@ public class UsersService {
     }
 
     @Transactional
-    public UserRequestDto.UserNicknameDto updateUserNickname(Long userId, UserRequestDto.UserNicknameDto userNicknameDto){
+    public UsersRequestDto.UserNicknameDto updateUserNickname(Long userId, UsersRequestDto.UserNicknameDto userNicknameDto){
         Users user = usersRepository.findById(userId).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
         user.setNickname(userNicknameDto.getNickname());
         usersRepository.save(user);
