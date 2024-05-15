@@ -4,9 +4,6 @@ import com.example.HiBuddy.domain.oauth.jwt.JwtFilter;
 import com.example.HiBuddy.domain.oauth.jwt.JwtLogoutFilter;
 import com.example.HiBuddy.domain.oauth.jwt.JwtUtil;
 import com.example.HiBuddy.domain.oauth.jwt.refreshtoken.RefreshTokenRepository;
-import com.example.HiBuddy.domain.oauth.service.CustomOAuth2UserService;
-import com.example.HiBuddy.global.response.exception.handler.UsersFailureHandler;
-import com.example.HiBuddy.global.response.exception.handler.UsersSuccessHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -19,8 +16,6 @@ import org.springframework.security.config.annotation.web.configurers.FormLoginC
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -32,10 +27,7 @@ import java.util.Collections;
 @Configurable
 @RequiredArgsConstructor
 @EnableWebSecurity
-public class SecurityConfig { // Servlet Container의 SecurityConfig 생성\
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final UsersSuccessHandler usersSuccessHandler;
-    private final UsersFailureHandler usersFailureHandler;
+public class SecurityConfig { // Servlet Container의 SecurityConfig 생성
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -48,33 +40,8 @@ public class SecurityConfig { // Servlet Container의 SecurityConfig 생성\
                 .sessionManagement(sessionManagement-> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 방식 x, oauth jwt STATELESS
                 )
-                .oauth2Login(oauth2->oauth2  // oauth2 login
-                        .redirectionEndpoint(endpoint->endpoint.baseUri("/login/oauth2/code/*"))
-                        .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService)))
-                        .successHandler(usersSuccessHandler)
-                        .failureHandler(usersFailureHandler)
-                )
-                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
-                        CorsConfiguration configuration = new CorsConfiguration();
-
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-
-                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-
-                        return configuration;
-                    }
-                }))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/hibuddy/v1/auth/**","/oauth2/authorization/**","/reissue").permitAll()
+                        .requestMatchers("/api.hibuddy.shop/v1/auth/**","/reissue").permitAll()
                         .requestMatchers("/hibuddy/v1/auth/user/**").authenticated() // 유저 페이지는 권한이 있어야 댐
                         .anyRequest().permitAll());
         http

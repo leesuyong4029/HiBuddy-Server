@@ -49,7 +49,7 @@ public class TokenServiceImpl implements TokenService {
 
         String username = jwtUtil.getUsername(refresh);
 
-        String newAccess = jwtUtil.createJwt("access_token", username, 600000L);
+        String newAccess = jwtUtil.createJwt("Authorization", username, 600000L);
         String newRefresh = jwtUtil.createJwt("refresh_token", username, 86400000L);
 
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
@@ -57,7 +57,7 @@ public class TokenServiceImpl implements TokenService {
         addRefreshToken(username, newRefresh, 86400000L);
 
 
-        response.setHeader("access_token", newAccess);
+        response.setHeader("Authorization", newAccess);
         return null; // 성공 시 null 반환
     }
 

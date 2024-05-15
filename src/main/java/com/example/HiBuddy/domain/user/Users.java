@@ -14,12 +14,12 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Getter
 @Setter
-public class Users extends BaseEntity {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Users extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", unique = true, nullable = false)
@@ -43,19 +43,34 @@ public class Users extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
-    // provider : google이 들어감
-    private String provider;
 
-    // providerId : 구굴 로그인 한 유저의 고유 ID가 들어감
-    private String providerId;
-
-    public Users update(String nickname) {
-        this.nickname = nickname;
-        return this;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
     }
 
-    public Users(String email, String oauth){
-        this.email = email;
+    @Override
+    public String getPassword() {
+        return null;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }

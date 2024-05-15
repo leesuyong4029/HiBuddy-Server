@@ -1,6 +1,6 @@
 package com.example.HiBuddy.domain.oauth.jwt;
 
-import com.example.HiBuddy.domain.oauth.dto.CustomOAuth2User;
+import com.example.HiBuddy.domain.user.Users;
 import com.example.HiBuddy.domain.user.UsersRequestDto;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -23,7 +23,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         // 헤더에서 access키에 담긴 토큰을 꺼냄
-        String accessToken = request.getHeader("access");
+        String accessToken = request.getHeader("Authorization");
 
 // 토큰이 없다면 다음 필터로 넘김
         if (accessToken == null) {
@@ -48,7 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
 // 토큰이 access인지 확인 (발급시 페이로드에 명시)
         String category = jwtUtil.getCategory(accessToken);
 
-        if (!category.equals("access")) {
+        if (!category.equals("Authorization")) {
 
             //response body
             PrintWriter writer = response.getWriter();
@@ -61,12 +61,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // username 획득
         String username = jwtUtil.getUsername(accessToken);
+        Users users = new Users();
+        users.setUsername(username);
 
-        UsersRequestDto.UsersOAuthDto usersOAuthDto = new UsersRequestDto.UsersOAuthDto();
-        usersOAuthDto.setUsername(username);
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(usersOAuthDto);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(users, null, users.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
