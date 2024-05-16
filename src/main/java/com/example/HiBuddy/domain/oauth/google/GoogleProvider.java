@@ -1,5 +1,4 @@
-package com.example.HiBuddy.domain.oauth.kakao;
-
+package com.example.HiBuddy.domain.oauth.google;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,77 +19,76 @@ import java.util.function.Consumer;
 
 @Component
 @RequiredArgsConstructor
-public class KakaoProvider {
+public class GoogleProvider {
     public static final String GRANT_TYPE = "authorization_code";
 
-    @Value("${spring.security.oauth2.client.registration.kakao.clientId}")
+    @Value("${spring.security.oauth2.client.registration.google.clientId}")
     private String clientId;
 
-    @Value("${spring.security.oauth2.client.registration.kakao.redirectUri}")
+    @Value("${spring.security.oauth2.client.registration.google.clientSecret}")
+    private String clientSecret;
+
+    @Value("${spring.security.oauth2.client.registration.google.redirectUri}")
     private String redirectUri;
-
-    @Value("${spring.security.oauth2.client.provider.kakao.tokenUri}")
-    private String tokenRequestUri;
-
-    @Value("${spring.security.oauth2.client.provider.kakao.userInfoUri}")
-    private String userInfoUri;
-    private final String contentType = "application/x-www-form-urlencoded;charset=utf-8";
     private final RestClient restClient=RestClient.create();
+
 
     public MultiValueMap<String, String> createTokenRequestParams(String code) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", GRANT_TYPE);
         params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
         params.add("redirect_uri", redirectUri);
         params.add("code", code);
         return params;
     }
 
-    public String getKakaoRequestUrl() {
-        List<String> scopes = Arrays.asList("account_email"); // 필요한 스코프
+    public String getGoogleRequestUrl() {
+        List<String> scopes = Arrays.asList("https://www.googleapis.com/auth/userinfo.email"); // 필요한 스코프
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/authorize")
-                .queryParam("response_type", "code")
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://accounts.google.com/o/oauth2/v2/auth")
                 .queryParam("client_id", clientId)
-                .queryParam("redirect_uri", redirectUri);                ;
+                .queryParam("redirect_uri", redirectUri)
+                .queryParam("response_type", "code")
+                .queryParam("scope", scopes)
+                .queryParam("access_type", "offline");;
         return builder.toUriString();
     }
 
 
-    public KakaoTokenResponse getKakaoOAuthToken(String code) {
-        HttpHeaders headers = new HttpHeaders();
-        Consumer<HttpHeaders>httpHeadersConsumer=httpHeaders -> {
-            headers.add("Content-type", contentType);
+    public GoogleTokenResponse getGoogleOAuthToken(String code) {
+        Consumer<HttpHeaders> httpHeadersConsumer= httpHeaders -> {
         };
 
         MultiValueMap<String, String> params = createTokenRequestParams(code);
 
         ResponseEntity<String> response = restClient
                 .method(HttpMethod.POST)
-                .uri(tokenRequestUri)
+                .uri("https://oauth2.googleapis.com/token")
                 .headers(httpHeadersConsumer)
                 .body(params)
                 .retrieve().toEntity(String.class);
         try {
-            return new ObjectMapper().readValue(response.getBody(), KakaoTokenResponse.class);
+            return new ObjectMapper().readValue(response.getBody(), GoogleTokenResponse.class);
         } catch (IOException e) {
-            throw new RuntimeException("Kakao OAuth token request failed", e);
+            throw new RuntimeException("Google OAuth token request failed", e);
         }
     }
 
-    public KakaoProfile getKakaoProfile(KakaoTokenResponse kakaoTokenResponse) {
+    public GoogleProfile getGoogleProfile(GoogleTokenResponse googleTokenResponse) {
         ResponseEntity<String> response = restClient
                 .post()
-                .uri(userInfoUri)
-                .headers(httpHeaders -> httpHeaders.setBearerAuth(kakaoTokenResponse.getAccess_token()))
+                .uri("https://www.googleapis.com/oauth2/v3/userinfo")
+                .headers(httpHeaders -> httpHeaders.setBearerAuth(googleTokenResponse.getAccess_token()))
                 .retrieve()
                 .toEntity(String.class);
 
         try {
-            return new ObjectMapper().readValue(response.getBody(), KakaoProfile.class);
+            return new ObjectMapper().readValue(response.getBody(), GoogleProfile.class);
         } catch (IOException e) {
             throw new RuntimeException("Failed to fetch Kakao user profile", e);
         }
     }
+
 
 }

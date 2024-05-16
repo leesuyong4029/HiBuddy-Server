@@ -1,57 +1,38 @@
 package com.example.HiBuddy.domain.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
+import com.example.HiBuddy.global.response.exception.handler.UsersHandler;
+import com.example.HiBuddy.global.security.UserDetailsImpl;
+import com.example.HiBuddy.global.security.UserDetailsServiceImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
+@RequiredArgsConstructor
 public class UsersService {
-
     private final UsersRepository usersRepository;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    public UsersService(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    public Long getUserId(UserDetails user){
+        String username = user.getUsername();
+        UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(username);
+        return userDetails.getUserId();
     }
-
-
     @Transactional
-    public Users findByEmail(String email){
-        return usersRepository.findByEmail(email).orElseGet(() -> {
-            // 이메일이 일치하는 사용자가 없으면 새로운 User 객체를 생성
-            Users newUsers = new Users();
-            return newUsers;
-        });
+    public void deleteUser(Long userId){
+        Users user = usersRepository.findUsersById(userId).orElseThrow(() -> new UsernameNotFoundException("User with ID " + userId + " not found"  ));
+        usersRepository.delete(user);
     }
 
     @Transactional
-    public int join(Users users) {
-        try {
-            usersRepository.save(users);
-            return 1;
-        } catch (Exception e) {
-            return -1;
-        }
-
+    public UsersRequestDto.UserNicknameDto updateUserNickname(Long userId, UsersRequestDto.UserNicknameDto userNicknameDto){
+        Users user = usersRepository.findById(userId).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+        user.setNickname(userNicknameDto.getNickname());
+        usersRepository.save(user);
+        return userNicknameDto;
     }
 
-    @Transactional
-    public Users updateNickname(Long userId, String newNickname) {
-        Optional<Users> userOptional = usersRepository.findById(userId);
-
-        if (!userOptional.isPresent()) {
-            throw new RuntimeException("User not found with id: " + userId);
-        }
-
-        Users users = userOptional.get();
-        users.setNickname(newNickname);
-        return usersRepository.save(users);
-    }
-    @Transactional
-    public Users findById(Long userId){
-        return usersRepository.findById(userId).orElseThrow(
-                ()->new IllegalArgumentException("Unexpected user"));
-    }
 }
