@@ -22,14 +22,15 @@ import java.util.List;
 public class Users extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private Long id;
 
     @Column
     private String username;
 
-    @Column // enum으로 조져도 됨
-    private String country;
+    @Enumerated(EnumType.STRING)
+    @Column
+    private Country country;
 
     @Column
     private String major;
@@ -42,6 +43,9 @@ public class Users extends BaseEntity implements UserDetails {
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    @Column
+    private String profileImageUrl;
 
 
     @Override

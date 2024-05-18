@@ -3,11 +3,18 @@ package com.example.HiBuddy.domain.oauth.jwt.token;
 import com.example.HiBuddy.domain.oauth.jwt.JwtUtil;
 import com.example.HiBuddy.domain.oauth.jwt.refreshtoken.RefreshToken;
 import com.example.HiBuddy.domain.oauth.jwt.refreshtoken.RefreshTokenRepository;
+import com.example.HiBuddy.domain.user.Users;
+import com.example.HiBuddy.domain.user.UsersRepository;
+import com.example.HiBuddy.global.response.ApiResponse;
+import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
+import com.example.HiBuddy.global.response.code.resultCode.SuccessStatus;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -18,9 +25,10 @@ public class TokenServiceImpl implements TokenService {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UsersRepository usersRepository;
 
     @Override
-    public String reissue(HttpServletRequest request, HttpServletResponse response) {
+    public ApiResponse<SuccessStatus> reissue(HttpServletRequest request, HttpServletResponse response) {
         String refresh = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -33,35 +41,46 @@ public class TokenServiceImpl implements TokenService {
         }
 
         if (refresh == null) {
-            return "refresh token null";
+            return ApiResponse.onFailure(ErrorStatus.REFRESH_TOKEN_NOT_FOUND.getCode(), ErrorStatus.REFRESH_TOKEN_NOT_FOUND.getMessage(), null);
         }
 
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
-            return "refresh token expired";
+            return ApiResponse.onFailure(ErrorStatus.EXPIRED_REFRESH_TOKEN.getCode(), ErrorStatus.EXPIRED_REFRESH_TOKEN.getMessage(), null);
         }
 
         String category = jwtUtil.getCategory(refresh);
         if (!"refresh_token".equals(category)) {
-            return "invalid refresh token";
+            return ApiResponse.onFailure(ErrorStatus.INVALID_REFRESH_TOKEN.getCode(), ErrorStatus.INVALID_REFRESH_TOKEN.getMessage(), null);
         }
 
         String username = jwtUtil.getUsername(refresh);
+        Users user = usersRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return ApiResponse.onFailure(ErrorStatus.USER_NOT_FOUND.getCode(), ErrorStatus.USER_NOT_FOUND.getMessage(), null);
+        }
 
-        String newAccess = jwtUtil.createJwt("Authorization", username, 600000L);
-        String newRefresh = jwtUtil.createJwt("refresh_token", username, 86400000L);
+        String newAccess = jwtUtil.createJwt("Authorization", username, user.getId(), 600000L);
+        String newRefresh = jwtUtil.createJwt("refresh_token", username, user.getId(), 86400000L);
 
-        //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
+        // Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
         refreshTokenRepository.deleteByRefresh(refresh);
         addRefreshToken(username, newRefresh, 86400000L);
 
-
         response.setHeader("Authorization", newAccess);
-        return null; // 성공 시 null 반환
+
+        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", newRefresh)
+                .httpOnly(true)
+                .maxAge(86400000L / 1000)
+                .path("/")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+        return ApiResponse.onSuccess(SuccessStatus.USER_TOKEN_REISSUE_SUCCESS);
     }
 
-    private void addRefreshToken(String username, String refreshToken, Long expiredMs){
+    private void addRefreshToken(String username, String refreshToken, Long expiredMs) {
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 
         RefreshToken refresh = new RefreshToken();
@@ -72,4 +91,5 @@ public class TokenServiceImpl implements TokenService {
         refreshTokenRepository.save(refresh);
     }
 }
+
 

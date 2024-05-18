@@ -7,22 +7,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsMvcConfig implements WebMvcConfigurer {
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods(
-                        HttpMethod.GET.name(),
-                        HttpMethod.POST.name(),
-                        HttpMethod.PUT.name(),
-                        HttpMethod.DELETE.name(),
-                        HttpMethod.PATCH.name()
-                )
-                /*.allowCredentials(true)
+                .allowedOrigins("http://localhost:3000")  // 개발 환경의 클라이언트 주소
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                .allowCredentials(true)
                 .allowedHeaders("*")
-                .exposedHeaders("Authorization", "Set-Cookie")*/
-                .maxAge(3600); // Optional: Set the max age to 1 hour (3600 seconds)
+                .exposedHeaders("Authorization", "Set-Cookie")
+                .maxAge(3600);
     }
 }
+
 

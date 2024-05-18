@@ -18,10 +18,16 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // OAuth
     EXPIRED_JWT_EXCEPTION(HttpStatus.UNAUTHORIZED, "OAUTH401", "기존 토큰이 만료되었습니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "OAUTH402", "Refresh token not found"),
+    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "OAUTH403", "Refresh token expired"),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "OAUTH404", "Invalid refresh token"),
 
     // Users
     USER_EXISTS_NICKNAME(HttpStatus.BAD_REQUEST, "USER401", "중복된 닉네임입니다."),
+    INVALID_COUNTRY(HttpStatus.BAD_REQUEST, "USER402", "유효하지 않은 국가입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER404", "유저를 찾을 수 없습니다."),
+    USER_NICKNAME_CHANGE_FAIL(HttpStatus.BAD_REQUEST, "USER405", "닉네임 수정하기 실패"),
+    USER_DELETE_FAIL(HttpStatus.BAD_REQUEST, "USER409", "유저 삭제 실패"),
 
     // Posts
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST401", "게시글을 찾을 수 없습니다."),
@@ -69,5 +75,4 @@ public enum ErrorStatus implements BaseErrorCode {
                 .httpStatus(httpStatus)
                 .build();
     }
-
 }

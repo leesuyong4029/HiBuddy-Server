@@ -41,8 +41,8 @@ public class SecurityConfig { // Servlet Container의 SecurityConfig 생성
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 방식 x, oauth jwt STATELESS
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api.hibuddy.shop/v1/auth/**","/reissue").permitAll()
-                        .requestMatchers("/hibuddy/v1/auth/user/**").authenticated() // 유저 페이지는 권한이 있어야 댐
+                        .requestMatchers("/v1/auth/**").permitAll()
+                        .requestMatchers("/v1/users/**").authenticated() // 유저 페이지는 권한이 있어야 댐
                         .anyRequest().permitAll());
         http
                 .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

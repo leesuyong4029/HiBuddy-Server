@@ -42,8 +42,8 @@ public class KakaoService {
         if (originUsers == null) {
             System.out.println("새 사용자 로그인 처리");
             // 새 사용자 등록 로그 또는 처리
-            jwtAccessToken = jwtUtil.createJwt("Authorization",kakaoUsers.getUsername(),600000L);
-            jwtRefreshToken = jwtUtil.createJwt("refresh_token",kakaoUsers.getUsername(),86400000L);
+            jwtAccessToken = jwtUtil.createJwt("Authorization",kakaoUsers.getUsername(), kakaoUsers.getId(),600000L);
+            jwtRefreshToken = jwtUtil.createJwt("refresh_token",kakaoUsers.getUsername(), kakaoUsers.getId(), 86400000L);
             addRefreshToken(username,jwtRefreshToken,86400000L);
             usersRepository.save(kakaoUsers);
             System.out.println("Access Token: "+jwtAccessToken);
@@ -51,8 +51,8 @@ public class KakaoService {
         } else {
             // 기존 사용자 로그인 처리
             System.out.println("기존 사용자 로그인 처리");
-            jwtAccessToken = jwtUtil.createJwt("Authorization",kakaoUsers.getUsername(),600000L);
-            jwtRefreshToken = jwtUtil.createJwt("refresh_token",kakaoUsers.getUsername(),86400000L);
+            jwtAccessToken = jwtUtil.createJwt("Authorization",originUsers.getUsername(), originUsers.getId(), 600000L);
+            jwtRefreshToken = jwtUtil.createJwt("refresh_token",originUsers.getUsername(), originUsers.getId(), 86400000L);
             addRefreshToken(username,jwtRefreshToken,86400000L);;
             System.out.println("Access Token: "+jwtAccessToken);
             System.out.println("Refresh Token: "+jwtRefreshToken);
