@@ -42,8 +42,8 @@ public class GoogleService {
         if (originUsers == null) {
             System.out.println("새 사용자 로그인 처리");
             // 새 사용자 등록 로그 또는 처리
-            jwtAccessToken = jwtUtil.createJwt("Authorization",googleUsers.getUsername(),600000L);
-            jwtRefreshToken = jwtUtil.createJwt("refresh_token",googleUsers.getUsername(),86400000L);
+            jwtAccessToken = jwtUtil.createJwt("Authorization",googleUsers.getUsername(), googleUsers.getId(), 600000L);
+            jwtRefreshToken = jwtUtil.createJwt("refresh_token",googleUsers.getUsername(), googleUsers.getId(), 86400000L);
             addRefreshToken(username,jwtRefreshToken,86400000L);
             usersRepository.save(googleUsers);
             System.out.println("Access Token: "+jwtAccessToken);
@@ -51,8 +51,8 @@ public class GoogleService {
         } else {
             // 기존 사용자 로그인 처리
             System.out.println("기존 사용자 로그인 처리");
-            jwtAccessToken = jwtUtil.createJwt("Authorization",googleUsers.getUsername(),600000L);
-            jwtRefreshToken = jwtUtil.createJwt("refresh_token",googleUsers.getUsername(),86400000L);
+            jwtAccessToken = jwtUtil.createJwt("Authorization",originUsers.getUsername(), originUsers.getId(), 600000L);
+            jwtRefreshToken = jwtUtil.createJwt("refresh_token",originUsers.getUsername(), originUsers.getId(), 86400000L);
             addRefreshToken(username,jwtRefreshToken,86400000L);;
             System.out.println("Access Token: "+jwtAccessToken);
             System.out.println("Refresh Token: "+jwtRefreshToken);

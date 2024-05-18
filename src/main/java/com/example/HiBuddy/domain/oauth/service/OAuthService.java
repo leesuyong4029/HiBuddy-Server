@@ -51,7 +51,6 @@ public class OAuthService {
     public String getAuthCodeRequestUrl(String providerName) {
         ClientRegistration provider = inMemoryRepository.findByRegistrationId(providerName);
         if (provider.getRegistrationId().equals("kakao")) {
-            System.out.println("2");
              return kakaoProvider.getKakaoRequestUrl();
         } else if (provider.getRegistrationId().equals("google")) {
             return googleProvider.getGoogleRequestUrl();

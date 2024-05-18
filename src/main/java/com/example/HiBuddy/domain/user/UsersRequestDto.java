@@ -24,7 +24,9 @@ public class UsersRequestDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserIdDto {
-        private Long id;
+    public static class UserOnboardingDto {
+        private Country country;
+        private String major;
+        private String nickname;
     }
 }

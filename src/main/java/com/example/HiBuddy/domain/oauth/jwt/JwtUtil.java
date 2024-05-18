@@ -32,11 +32,12 @@ public class JwtUtil {
                 .getPayload().get("category",String.class);
     }
 
-    public String createJwt(String category, String username, Long expiredMs) {
+    public String createJwt(String category, String username, Long id, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category",category)
                 .claim("username", username)
+                .claim("userId", id)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)

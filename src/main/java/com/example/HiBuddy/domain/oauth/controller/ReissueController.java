@@ -2,6 +2,12 @@ package com.example.HiBuddy.domain.oauth.controller;
 
 import com.example.HiBuddy.domain.oauth.jwt.refreshtoken.RefreshTokenRepository;
 import com.example.HiBuddy.domain.oauth.jwt.token.TokenService;
+import com.example.HiBuddy.global.response.ApiResponse;
+import com.example.HiBuddy.global.response.code.resultCode.SuccessStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,18 +19,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api.hibuddy.shop/v1/auth")
+@RequestMapping("/v1/auth")
 public class ReissueController {
 
     private final TokenService tokenService;
 
+    @Operation(summary = "Reissue JWT tokens", description = "Reissues access and refresh tokens if the provided refresh token is valid.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "OAUTH402", description = "Refresh token not found", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "OAUTH403", description = "Refresh token expired", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "OAUTH404", description = "Invalid refresh token", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
-        String result = tokenService.reissue(request, response);
-        if (result != null) {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ApiResponse<SuccessStatus>> reissue(HttpServletRequest request, HttpServletResponse response) {
+        ApiResponse<SuccessStatus> result = tokenService.reissue(request, response);
+        return new ResponseEntity<>(result, result.getIsSuccess() ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 }
 
