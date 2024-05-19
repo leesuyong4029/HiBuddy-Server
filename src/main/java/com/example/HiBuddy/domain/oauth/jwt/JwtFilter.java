@@ -1,7 +1,6 @@
 package com.example.HiBuddy.domain.oauth.jwt;
 
 import com.example.HiBuddy.domain.user.Users;
-import com.example.HiBuddy.domain.user.UsersRequestDto;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {

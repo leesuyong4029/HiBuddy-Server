@@ -1,24 +1,14 @@
 package com.example.HiBuddy.domain.user;
 
+import com.example.HiBuddy.domain.user.dto.request.UsersRequestDto;
 import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
 import com.example.HiBuddy.global.response.exception.handler.UsersHandler;
 import com.example.HiBuddy.global.security.UserDetailsImpl;
-import com.example.HiBuddy.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +45,14 @@ public class UsersService {
         usersRepository.save(users);
 
         return dto;
+    }
+
+    @Transactional
+    public Long getUserId(UserDetails user) {
+        String username = user.getUsername();
+        Users users = usersRepository.findByUsername(username)
+                .orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+        return users.getId();
     }
 }
 
