@@ -1,5 +1,6 @@
-package com.example.HiBuddy.domain.user;
+package com.example.HiBuddy.domain.user.dto.response;
 
+import com.example.HiBuddy.domain.user.Country;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

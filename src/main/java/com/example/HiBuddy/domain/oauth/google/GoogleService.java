@@ -6,7 +6,6 @@ import com.example.HiBuddy.domain.oauth.jwt.refreshtoken.RefreshToken;
 import com.example.HiBuddy.domain.oauth.jwt.refreshtoken.RefreshTokenRepository;
 import com.example.HiBuddy.domain.user.Users;
 import com.example.HiBuddy.domain.user.UsersRepository;
-import com.example.HiBuddy.domain.user.UsersRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

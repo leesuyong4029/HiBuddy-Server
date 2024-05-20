@@ -1,5 +1,6 @@
-package com.example.HiBuddy.domain.user;
+package com.example.HiBuddy.domain.user.dto.request;
 
+import com.example.HiBuddy.domain.user.Country;
 import lombok.*;
 
 public class UsersRequestDto {
