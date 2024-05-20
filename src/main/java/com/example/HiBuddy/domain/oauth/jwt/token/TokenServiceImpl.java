@@ -33,7 +33,7 @@ public class TokenServiceImpl implements TokenService {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("refresh_token".equals(cookie.getName())) {
+                if ("refreshToken".equals(cookie.getName())) {
                     refresh = cookie.getValue();
                     break;
                 }
@@ -51,7 +51,7 @@ public class TokenServiceImpl implements TokenService {
         }
 
         String category = jwtUtil.getCategory(refresh);
-        if (!"refresh_token".equals(category)) {
+        if (!"refreshToken".equals(category)) {
             return ApiResponse.onFailure(ErrorStatus.INVALID_REFRESH_TOKEN.getCode(), ErrorStatus.INVALID_REFRESH_TOKEN.getMessage(), null);
         }
 
@@ -62,15 +62,16 @@ public class TokenServiceImpl implements TokenService {
         }
 
         String newAccess = jwtUtil.createJwt("Authorization", username, user.getId(), 600000L);
-        String newRefresh = jwtUtil.createJwt("refresh_token", username, user.getId(), 86400000L);
+        String newRefresh = jwtUtil.createJwt("refreshToken", username, user.getId(), 86400000L);
 
         // Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
         refreshTokenRepository.deleteByRefresh(refresh);
         addRefreshToken(username, newRefresh, 86400000L);
 
-        response.setHeader("Authorization", newAccess);
+        // Authorization 헤더 설정
+        response.setHeader("Authorization", "Bearer " + newAccess);
 
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", newRefresh)
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", newRefresh)
                 .httpOnly(true)
                 .maxAge(86400000L / 1000)
                 .path("/")
