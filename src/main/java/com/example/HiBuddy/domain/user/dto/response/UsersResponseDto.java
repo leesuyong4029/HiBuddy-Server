@@ -1,10 +1,8 @@
 package com.example.HiBuddy.domain.user.dto.response;
 
+import com.example.HiBuddy.domain.image.Images;
 import com.example.HiBuddy.domain.user.Country;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 public class UsersResponseDto {
 
@@ -16,5 +14,18 @@ public class UsersResponseDto {
         private String nickname;
         private Country country;
         private String major;
+        private Images profileImage;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UsersPostDto {
+        private Long userId;
+        private Country country;
+        private String major;
+        private String nickname;
     }
 }

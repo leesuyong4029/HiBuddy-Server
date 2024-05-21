@@ -1,6 +1,9 @@
 package com.example.HiBuddy.domain.user;
 
+import com.example.HiBuddy.domain.image.Images;
+import com.example.HiBuddy.domain.post.Posts;
 import com.example.HiBuddy.global.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,6 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,7 +40,7 @@ public class Users extends BaseEntity implements UserDetails {
     private String major;
 
     @Column
-    private boolean status;
+    private Status status;
 
     @Column
     private String nickname;
@@ -44,8 +48,18 @@ public class Users extends BaseEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column
-    private String profileImageUrl;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_image_id")
+    @JsonManagedReference
+    private Images profileImage;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Images> images;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Posts> posts = new ArrayList<>();
 
 
     @Override

@@ -61,19 +61,20 @@ public class TokenServiceImpl implements TokenService {
             return ApiResponse.onFailure(ErrorStatus.USER_NOT_FOUND.getCode(), ErrorStatus.USER_NOT_FOUND.getMessage(), null);
         }
 
-        String newAccess = jwtUtil.createJwt("Authorization", username, user.getId(), 600000L);
-        String newRefresh = jwtUtil.createJwt("refreshToken", username, user.getId(), 86400000L);
+        String newAccess = jwtUtil.createJwt("Authorization", username, user.getId(), 86400L); // 하루
+        String newRefresh = jwtUtil.createJwt("refreshToken", username, user.getId(), 604800L);
+
 
         // Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
         refreshTokenRepository.deleteByRefresh(refresh);
-        addRefreshToken(username, newRefresh, 86400000L);
+        addRefreshToken(username, newRefresh, 604800L);
 
         // Authorization 헤더 설정
         response.setHeader("Authorization", "Bearer " + newAccess);
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", newRefresh)
                 .httpOnly(true)
-                .maxAge(86400000L / 1000)
+                .maxAge(604800L)
                 .path("/")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());

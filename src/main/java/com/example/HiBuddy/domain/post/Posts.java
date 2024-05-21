@@ -1,6 +1,7 @@
 package com.example.HiBuddy.domain.post;
 
 import com.example.HiBuddy.domain.image.Images;
+
 import com.example.HiBuddy.domain.postLike.PostLikes;
 import com.example.HiBuddy.domain.scrab.Scrabs;
 import com.example.HiBuddy.domain.user.Users;
