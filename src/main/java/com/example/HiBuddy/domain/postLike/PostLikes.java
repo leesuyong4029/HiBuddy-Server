@@ -1,4 +1,4 @@
-package com.example.HiBuddy.domain.scrab;
+package com.example.HiBuddy.domain.postLike;
 
 import com.example.HiBuddy.domain.post.Posts;
 import com.example.HiBuddy.domain.user.Users;
@@ -9,13 +9,12 @@ import lombok.*;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "scrabs")
-public class Scrabs extends BaseEntity {
+@NoArgsConstructor
+@Table(name = "post_likes")
+public class PostLikes extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,5 +24,4 @@ public class Scrabs extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Posts post;
-
 }

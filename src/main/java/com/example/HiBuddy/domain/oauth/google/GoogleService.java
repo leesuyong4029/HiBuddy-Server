@@ -1,5 +1,4 @@
-package com.example.HiBuddy.domain.oauth.kakao;
-
+package com.example.HiBuddy.domain.oauth.google;
 
 import com.example.HiBuddy.domain.oauth.dto.TokenDto;
 import com.example.HiBuddy.domain.oauth.jwt.JwtUtil;
@@ -14,38 +13,38 @@ import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
-public class KakaoService {
+public class GoogleService {
     private final UsersRepository usersRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
-    private final KakaoProvider kakaoProvider;
+    private final GoogleProvider googleProvider;
 
-    public KakaoTokenResponse getAccessToken(String code){
-        return kakaoProvider.getKakaoOAuthToken(code);
+    public GoogleTokenResponse getAccessToken(String code){
+        return googleProvider.getGoogleOAuthToken(code);
     }
 
-    public TokenDto kakaoLogin(KakaoTokenResponse accessToken){
+    public TokenDto googleLogin(GoogleTokenResponse accessToken){
         String jwtAccessToken = "";
         String jwtRefreshToken = "";
-        KakaoProfile kakaoProfile = kakaoProvider.getKakaoProfile(accessToken);
+        GoogleProfile googleProfile = googleProvider.getGoogleProfile(accessToken);
 
-        String username = "kakao"+"_"+kakaoProfile.getId();
+        String username = "google"+"_"+googleProfile.getSub();
 
-        Users kakaoUsers = Users.builder()
-                .email(kakaoProfile.getKakao_account().getEmail())
+        Users googleUsers = Users.builder()
+                .email(googleProfile.getEmail())
                 .status(true)
                 .username(username)
                 .build();
 
-        Users originUsers = usersRepository.findByUsername(kakaoUsers.getUsername()).orElse(null);
+        Users originUsers = usersRepository.findByUsername(googleUsers.getUsername()).orElse(null);
 
         if (originUsers == null) {
             System.out.println("새 사용자 로그인 처리");
             // 새 사용자 등록 로그 또는 처리
-            jwtAccessToken = jwtUtil.createJwt("Authorization",kakaoUsers.getUsername(), kakaoUsers.getId(),600000L);
-            jwtRefreshToken = jwtUtil.createJwt("refresh_token",kakaoUsers.getUsername(), kakaoUsers.getId(), 86400000L);
+            jwtAccessToken = jwtUtil.createJwt("Authorization",googleUsers.getUsername(), googleUsers.getId(), 600000L);
+            jwtRefreshToken = jwtUtil.createJwt("refresh_token",googleUsers.getUsername(), googleUsers.getId(), 86400000L);
             addRefreshToken(username,jwtRefreshToken,86400000L);
-            usersRepository.save(kakaoUsers);
+            usersRepository.save(googleUsers);
             System.out.println("Access Token: "+jwtAccessToken);
             System.out.println("Refresh Token: "+jwtRefreshToken);
         } else {
@@ -73,5 +72,6 @@ public class KakaoService {
 
         refreshTokenRepository.save(refresh);
     }
+
 
 }

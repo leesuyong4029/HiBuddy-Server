@@ -1,8 +1,9 @@
-package com.example.HiBuddy.domain.user;
+package com.example.HiBuddy.domain.user.dto.request;
 
+import com.example.HiBuddy.domain.user.Country;
 import lombok.*;
 
-public class UserRequestDto {
+public class UsersRequestDto {
 
     @Builder
     @Getter
@@ -24,7 +25,9 @@ public class UserRequestDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserIdDto {
-        private Long id;
+    public static class UserOnboardingDto {
+        private Country country;
+        private String major;
+        private String nickname;
     }
 }

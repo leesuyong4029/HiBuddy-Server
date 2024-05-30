@@ -1,4 +1,4 @@
-package com.example.HiBuddy.domain.oauth.kakao;
+package com.example.HiBuddy.domain.oauth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +8,6 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class TokenDto {
-    private String grantType;
     private String accessToken;
     private String refreshToken;
 }
