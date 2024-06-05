@@ -29,7 +29,7 @@ public class ImagesController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "IMAGE401", description = "이미지 업로드 실패", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
-    public ApiResponse<ImagesResponseDto> uploadImages(@AuthenticationPrincipal UserDetails user, @RequestParam("fileList") List<MultipartFile> fileList) {
+    public ApiResponse<ImagesResponseDto> uploadImages(@AuthenticationPrincipal UserDetails user, @RequestPart("fileList") List<MultipartFile> fileList) {
         Long userId = usersService.getUserId(user);
         List<Images> imageList = imagesService.uploadImages(fileList, userId);
         ImagesResponseDto imagesResponseDto = ImagesConverter.toUploadImagesDto(imageList);
