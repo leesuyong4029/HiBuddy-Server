@@ -1,4 +1,4 @@
-package com.example.HiBuddy.domain.scrab;
+package com.example.HiBuddy.domain.scrap;
 
 import com.example.HiBuddy.domain.post.Posts;
 import com.example.HiBuddy.domain.user.Users;
@@ -11,8 +11,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "scrabs")
-public class Scrabs extends BaseEntity {
+@Table(name = "scraps")
+public class Scraps extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

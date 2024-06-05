@@ -61,7 +61,7 @@ public class TokenServiceImpl implements TokenService {
             return ApiResponse.onFailure(ErrorStatus.USER_NOT_FOUND.getCode(), ErrorStatus.USER_NOT_FOUND.getMessage(), null);
         }
 
-        String newAccess = jwtUtil.createJwt("Authorization", username, user.getId(), 600000L);
+        String newAccess = jwtUtil.createJwt("Authorization", username, user.getId(), 60000000L);
         String newRefresh = jwtUtil.createJwt("refresh_token", username, user.getId(), 86400000L);
 
         // Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
