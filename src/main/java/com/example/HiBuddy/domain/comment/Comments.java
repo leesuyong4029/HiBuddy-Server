@@ -4,24 +4,26 @@ import com.example.HiBuddy.domain.post.Posts;
 import com.example.HiBuddy.domain.user.Users;
 import com.example.HiBuddy.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "comments")
 public class Comments extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(length = 500)
+    @Column(nullable = false, length = 500)
     private String comment;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isAuthor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
