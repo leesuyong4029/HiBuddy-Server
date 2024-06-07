@@ -3,7 +3,7 @@ package com.example.HiBuddy.domain.user;
 import com.example.HiBuddy.domain.image.Images;
 import com.example.HiBuddy.domain.image.dto.response.ImagesResponseDto;
 import com.example.HiBuddy.domain.post.dto.response.PostsResponseDto;
-import com.example.HiBuddy.domain.scrab.response.ScrabsResponseDto;
+import com.example.HiBuddy.domain.scrap.response.ScrapsResponseDto;
 import com.example.HiBuddy.domain.user.dto.request.UsersRequestDto;
 import com.example.HiBuddy.domain.user.dto.response.UsersResponseDto;
 import com.example.HiBuddy.global.response.ApiResponse;
@@ -17,17 +17,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -132,18 +128,18 @@ public class UsersController {
         }
     }
 
-    @GetMapping("/scrabs")
+    @GetMapping("/scraps")
     @Operation(summary = "내가 스크랩한 게시글들 가져오기", description = "내가 스크랩한 게시글들을 반환해줍니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST403", description = "스크랩 목록을 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
-    public ApiResponse<PagedResponse<ScrabsResponseDto.ScrabsDto>> getMyScrabs(@AuthenticationPrincipal UserDetails user,
+    public ApiResponse<PagedResponse<ScrapsResponseDto.ScrabsDto>> getMyScrabs(@AuthenticationPrincipal UserDetails user,
                                                                                @RequestParam(defaultValue = "1") int page,
                                                                                @RequestParam(defaultValue = "5") int limit) {
         Long userId = usersService.getUserId(user);
         try {
-            PagedResponse<ScrabsResponseDto.ScrabsDto> pagedScrabs = usersService.getScrabsByUserId(userId, page - 1, limit);
+            PagedResponse<ScrapsResponseDto.ScrabsDto> pagedScrabs = usersService.getScrabsByUserId(userId, page - 1, limit);
             return ApiResponse.onSuccess(pagedScrabs);
         } catch (PostsHandler e) {
             return ApiResponse.onFailure(e.getErrorReason().getCode(), e.getErrorReason().getMessage(), null);

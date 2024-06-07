@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -45,7 +46,7 @@ public class SecurityConfig { // Servlet Container의 SecurityConfig 생성
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/v1/auth/**","/v1/info/**").permitAll()
-                        .requestMatchers("/v1/users/**").authenticated()
+                        .requestMatchers("/v1/users/**", "/v1/tests/**","/v1/images/**", "/v1/thread/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
@@ -54,7 +55,7 @@ public class SecurityConfig { // Servlet Container의 SecurityConfig 생성
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://hi-buddy.vercel.app"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));

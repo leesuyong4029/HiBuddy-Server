@@ -1,4 +1,4 @@
-package com.example.HiBuddy.domain.scrab.response;
+package com.example.HiBuddy.domain.scrap.response;
 
 import com.example.HiBuddy.domain.post.dto.response.PostsResponseDto;
 import com.example.HiBuddy.domain.user.dto.response.UsersResponseDto;
@@ -6,7 +6,7 @@ import lombok.*;
 
 import java.util.List;
 
-public class ScrabsResponseDto {
+public class ScrapsResponseDto {
     @Getter
     @Setter
     @Builder

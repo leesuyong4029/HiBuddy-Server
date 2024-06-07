@@ -4,7 +4,6 @@ import com.example.HiBuddy.global.response.code.BaseErrorCode;
 import com.example.HiBuddy.global.response.code.ErrorReasonDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.hibernate.annotations.DialectOverride;
 import org.springframework.http.HttpStatus;
 
 // Enum Naming Format: {주체}_{이유}
@@ -31,20 +30,32 @@ public enum ErrorStatus implements BaseErrorCode {
     USER_DELETE_FAIL(HttpStatus.BAD_REQUEST, "USER409", "유저 삭제 실패"),
 
     // Posts
-    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST401", "게시글을 찾을 수 없습니다."),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST401", "존재하지 않는 게시글입니다."),
     POST_CREATE_FAIL(HttpStatus.BAD_REQUEST, "POST402", "게시글 작성에 실패했습니다."),
-    POST_SCRAB_LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST403", "스크랩 목록을 찾을 수 없습니다."),
+    POST_SCRAP_LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST403", "스크랩 목록을 찾을 수 없습니다."),
     POST_LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST404", "게시글 목록이 존재하지 않습니다."),
     POST_TITLE_NOT_FOUND(HttpStatus.NOT_FOUND, "POST405", "존재하지 않는 게시글 제목입니다."),
+    POST_IMAGE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "POST406", "최대 3장의 이미지만 업로드 가능합니다."),
+    POST_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "POST407", "게시글에 대한 권한이 없습니다."),
+    POST_TITLE_MAX_LENGTH_100(HttpStatus.BAD_REQUEST, "POST408", "게시글의 제목은 최대 100자까지 입력 가능합니다."),
+    POST_CONTENT_MAX_LENGTH_500(HttpStatus.BAD_REQUEST, "POST409", "게시글의 본문은 최대 500자까지 입력 가능합니다."),
 
-    // PostLikes
+    // PostsLike
     POSTLIKE_CREATE_FAIL(HttpStatus.NOT_FOUND, "POSTLIKE401", "좋아요 누르기에 실패했습니다."),
     POSTLIKE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "POSTLIKE402", "이미 좋아요를 누른 게시물입니다."),
     POSTLIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "POSTLIKE403", "존재하지 않는 공감입니다."),
+    POSTLIKE_DELETE_FAIL(HttpStatus.NOT_FOUND, "POSTLIKE404", "좋아요의 개수가 0입니다."),
 
     // Comments
     COMMENT_CREATE_FAIL(HttpStatus.NOT_FOUND, "COMMENT401", "댓글 생성에 실패했습니다."),
     COMMENT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "COMMENT402", "이미 작성한 댓글입니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT403", "존재하지 않는 댓글입니다."),
+    COMMENT_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMENT404", "해당 댓글에 대한 권한이 없습니다."),
+    COMMENT_MAX_LENGTH_500(HttpStatus.BAD_REQUEST, "COMMENT405", "댓글은 최대 500자까지 입력 가능합니다."),
+
+    // Scraps
+    SCRAP_CREATE_FAIL(HttpStatus.NOT_FOUND, "SCRAP401", "스크랩 생성에 실패했습니다."),
+    SCRAP_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "SCRAP402", "이미 스크랩한 게시글입니다."),
 
     // Images
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "IMAGE401", "파일이 존재하지 않습니다."),

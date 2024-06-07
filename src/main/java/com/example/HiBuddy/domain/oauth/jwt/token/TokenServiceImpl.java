@@ -62,6 +62,7 @@ public class TokenServiceImpl implements TokenService {
         }
 
 
+
         String newAccess = jwtUtil.createJwt("Authorization", username, user.getId(), 86400000L); // 하루
         String newRefresh = jwtUtil.createJwt("refreshToken", username, user.getId(), 604800000L);
 

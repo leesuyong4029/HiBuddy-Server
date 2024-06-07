@@ -6,15 +6,15 @@ import com.example.HiBuddy.domain.image.ImagesService;
 import com.example.HiBuddy.domain.post.Posts;
 import com.example.HiBuddy.domain.post.PostsRepository;
 import com.example.HiBuddy.domain.post.dto.response.PostsResponseDto;
-import com.example.HiBuddy.domain.scrab.Scrabs;
-import com.example.HiBuddy.domain.scrab.ScrabsRepository;
-import com.example.HiBuddy.domain.scrab.response.ScrabsResponseDto;
+import com.example.HiBuddy.domain.scrap.Scraps;
+import com.example.HiBuddy.domain.scrap.ScrapsRepository;
+import com.example.HiBuddy.domain.scrap.response.ScrapsResponseDto;
 import com.example.HiBuddy.domain.user.dto.request.UsersRequestDto;
 import com.example.HiBuddy.domain.user.dto.response.UsersResponseDto;
 import com.example.HiBuddy.global.response.PagedResponse;
 import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
 import com.example.HiBuddy.global.response.exception.handler.PostsHandler;
-import com.example.HiBuddy.global.response.exception.handler.ScrabsHandler;
+import com.example.HiBuddy.global.response.exception.handler.ScrapsHandler;
 import com.example.HiBuddy.global.response.exception.handler.UsersHandler;
 import com.example.HiBuddy.global.s3.S3Service;
 import com.example.HiBuddy.global.s3.dto.S3Result;
@@ -42,7 +42,7 @@ public class UsersService {
     private final ImagesRepository imagesRepository;
     private final S3Service s3Service;
     private final PostsRepository postsRepository;
-    private final ScrabsRepository scrabsRepository;
+    private final ScrapsRepository scrapsRepository;
 
     public Optional<UsersResponseDto.UsersMyPageDto> getUserDTOById(Long id) {
         return usersRepository.findById(id).map(user -> {
@@ -173,15 +173,15 @@ public class UsersService {
     }
 
     @Transactional
-    public PagedResponse<ScrabsResponseDto.ScrabsDto> getScrabsByUserId(Long userId, int page, int size) {
+    public PagedResponse<ScrapsResponseDto.ScrabsDto> getScrabsByUserId(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Scrabs> scrabsPage = scrabsRepository.findByUserId(userId, pageable);
+        Page<Scraps> scrabsPage = scrapsRepository.findByUserId(userId, pageable);
 
         if (scrabsPage.isEmpty()) {
-            throw new ScrabsHandler(ErrorStatus.POST_SCRAB_LIST_NOT_FOUND);
+            throw new ScrapsHandler(ErrorStatus.POST_SCRAP_LIST_NOT_FOUND);
         }
 
-        List<ScrabsResponseDto.ScrabsDto> scrabsDtos = scrabsPage.getContent().stream()
+        List<ScrapsResponseDto.ScrabsDto> scrabsDtos = scrabsPage.getContent().stream()
                 .map(scrab -> convertToScrabsDto(scrab.getPost()))
                 .collect(Collectors.toList());
 
@@ -196,13 +196,13 @@ public class UsersService {
         );
     }
 
-    private ScrabsResponseDto.ScrabsDto convertToScrabsDto(Posts post) {
+    private ScrapsResponseDto.ScrabsDto convertToScrabsDto(Posts post) {
         List<PostsResponseDto.PostImageDto> postImages = post.getPostImageList().stream()
                 .map(image -> new PostsResponseDto.PostImageDto(image.getId(), image.getUrl()))
                 .limit(3)
                 .collect(Collectors.toList());
 
-        return ScrabsResponseDto.ScrabsDto.builder()
+        return ScrapsResponseDto.ScrabsDto.builder()
                 .postId(post.getId())
                 .likeNum(post.getPostLikeList().size())
                 // .commentNum(post.getComments().size()) // Uncomment if comments are available
