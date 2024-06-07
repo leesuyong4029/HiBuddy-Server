@@ -44,7 +44,7 @@ public class SecurityConfig { // Servlet Container의 SecurityConfig 생성
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/v1/auth/**").permitAll()
+                        .requestMatchers("/v1/auth/**","/v1/info/**").permitAll()
                         .requestMatchers("/v1/users/**").authenticated()
                         .anyRequest().permitAll()
                 )

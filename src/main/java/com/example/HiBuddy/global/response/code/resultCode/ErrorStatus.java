@@ -18,9 +18,10 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // OAuth
     EXPIRED_JWT_EXCEPTION(HttpStatus.UNAUTHORIZED, "OAUTH401", "기존 토큰이 만료되었습니다."),
-    REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "OAUTH402", "Refersh Token을 찾지 못했습니다."),
-    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "OAUTH403", "Refersh Token이 만료되었습니다."),
-    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "OAUTH404", "Refersh Token이 유효하지 않습니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "OAUTH402", "Refresh Token을 찾지 못했습니다."),
+    EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "OAUTH403", "Refresh Token이 만료되었습니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "OAUTH404", "Refresh Token이 유효하지 않습니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "OAUTH405", "Access Token이 유효하지 않습니다."),
 
     // Users
     USER_EXISTS_NICKNAME(HttpStatus.BAD_REQUEST, "USER401", "중복된 닉네임입니다."),

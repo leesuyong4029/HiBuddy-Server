@@ -37,7 +37,7 @@ public class Users extends BaseEntity implements UserDetails {
     private Country country;
 
     @Column
-    private String major;
+    private Major major;
 
     @Column
     private Status status;

@@ -37,7 +37,7 @@ public class OAuthController {
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", tokenDto.getRefreshToken())
                 .httpOnly(true)
-                .maxAge(604800L)
+                .maxAge(604800000L)
                 .path("/")
                 .build();
         headers.add(HttpHeaders.SET_COOKIE, refreshCookie.toString());
