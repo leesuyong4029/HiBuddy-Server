@@ -29,6 +29,7 @@ public enum SuccessStatus implements BaseCode {
     GET_MY_SCRAB_COMMENT_SUCCESS(HttpStatus.OK,"USER208", "내가 스크랩한 게시글 가져오기 성공"),
     USER_DELETE_SUCCESS(HttpStatus.OK, "USER209", "유저 삭제 성공"),
     USER_ONBOARDING_SUCCESS(HttpStatus.OK, "USER210", "온보딩 데이터 적용 성공"),
+    USER_LOGOUT_SUCCESS(HttpStatus.OK, "USER211", "사용자 로그아웃 성공"),
 
     // Posts
     POST_S3_IMAGE_UPLOAD_SUCCESS(HttpStatus.OK,"POST201", "S3 이미지 업로드 성공"),

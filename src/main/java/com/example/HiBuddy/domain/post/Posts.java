@@ -2,6 +2,7 @@ package com.example.HiBuddy.domain.post;
 
 import com.example.HiBuddy.domain.comment.Comments;
 import com.example.HiBuddy.domain.image.Images;
+
 import com.example.HiBuddy.domain.postLike.PostLikes;
 import com.example.HiBuddy.domain.scrap.Scraps;
 import com.example.HiBuddy.domain.user.Users;

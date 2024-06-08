@@ -20,8 +20,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @Configurable
@@ -32,21 +36,38 @@ public class SecurityConfig { // Servlet Container의 SecurityConfig 생성
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { // 인가 작업 진행
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(CsrfConfigurer::disable) // csrf 비활성화
-                .formLogin(FormLoginConfigurer::disable) // formLogin 비활성화
-                .httpBasic(HttpBasicConfigurer::disable) // httpBasic 비활성화
-                .sessionManagement(sessionManagement-> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 방식 x, oauth jwt STATELESS
+                .csrf(CsrfConfigurer::disable)
+                .formLogin(FormLoginConfigurer::disable)
+                .httpBasic(HttpBasicConfigurer::disable)
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/v1/auth/**").permitAll()
-                        .requestMatchers("/v1/users/**").authenticated() // 유저 페이지는 권한이 있어야 댐
-                        .anyRequest().permitAll());
-        http
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-        http
+                        .requestMatchers("/v1/auth/**","/v1/info/**").permitAll()
+                        .requestMatchers("/v1/users/**", "/v1/tests/**","/v1/images/**", "/v1/thread/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                        CorsConfiguration configuration = new CorsConfiguration();
+
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://hi-buddy.vercel.app"));
+                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        configuration.setAllowCredentials(true);
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setMaxAge(3600L);
+
+                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                        return configuration;
+                    }
+                }))
+                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
         return http.build();
     }

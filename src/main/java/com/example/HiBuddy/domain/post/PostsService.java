@@ -45,7 +45,7 @@ public class PostsService {
     private final ScrapsRepository scrapsRepository;
 
     // 시간 구하는 메서드
-    public String getCreatedAt(LocalDateTime createdAt) {
+    public static String getCreatedAt(LocalDateTime createdAt) {
 
         // 서버시간을 UTC로 설정
         ZoneId serverZone = ZoneId.systemDefault(); // 시스템 기본 시간대를 사용
