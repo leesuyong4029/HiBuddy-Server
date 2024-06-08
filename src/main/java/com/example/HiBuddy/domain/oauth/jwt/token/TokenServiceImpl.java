@@ -33,7 +33,7 @@ public class TokenServiceImpl implements TokenService {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("refresh_token".equals(cookie.getName())) {
+                if ("refreshToken".equals(cookie.getName())) {
                     refresh = cookie.getValue();
                     break;
                 }
@@ -44,16 +44,16 @@ public class TokenServiceImpl implements TokenService {
             return ApiResponse.onFailure(ErrorStatus.REFRESH_TOKEN_NOT_FOUND.getCode(), ErrorStatus.REFRESH_TOKEN_NOT_FOUND.getMessage(), null);
         }
 
+        if (!refreshTokenRepository.existsByRefresh(refresh)) {
+            return ApiResponse.onFailure(ErrorStatus.INVALID_REFRESH_TOKEN.getCode(), ErrorStatus.INVALID_REFRESH_TOKEN.getMessage(), null);
+        }
+
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
             return ApiResponse.onFailure(ErrorStatus.EXPIRED_REFRESH_TOKEN.getCode(), ErrorStatus.EXPIRED_REFRESH_TOKEN.getMessage(), null);
         }
 
-        String category = jwtUtil.getCategory(refresh);
-        if (!"refresh_token".equals(category)) {
-            return ApiResponse.onFailure(ErrorStatus.INVALID_REFRESH_TOKEN.getCode(), ErrorStatus.INVALID_REFRESH_TOKEN.getMessage(), null);
-        }
 
         String username = jwtUtil.getUsername(refresh);
         Users user = usersRepository.findByUsername(username).orElse(null);
@@ -61,18 +61,22 @@ public class TokenServiceImpl implements TokenService {
             return ApiResponse.onFailure(ErrorStatus.USER_NOT_FOUND.getCode(), ErrorStatus.USER_NOT_FOUND.getMessage(), null);
         }
 
-        String newAccess = jwtUtil.createJwt("Authorization", username, user.getId(), 60000000L);
-        String newRefresh = jwtUtil.createJwt("refresh_token", username, user.getId(), 86400000L);
+
+
+        String newAccess = jwtUtil.createJwt("Authorization", username, user.getId(), 86400000L); // 하루
+        String newRefresh = jwtUtil.createJwt("refreshToken", username, user.getId(), 604800000L);
+
 
         // Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
         refreshTokenRepository.deleteByRefresh(refresh);
-        addRefreshToken(username, newRefresh, 86400000L);
+        addRefreshToken(username, newRefresh, 604800000L);
 
-        response.setHeader("Authorization", newAccess);
+        // Authorization 헤더 설정
+        response.setHeader("Authorization", "Bearer " + newAccess);
 
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", newRefresh)
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", newRefresh)
                 .httpOnly(true)
-                .maxAge(86400000L / 1000)
+                .maxAge(604800000L)
                 .path("/")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());

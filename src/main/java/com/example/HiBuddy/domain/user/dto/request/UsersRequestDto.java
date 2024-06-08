@@ -1,6 +1,7 @@
 package com.example.HiBuddy.domain.user.dto.request;
 
 import com.example.HiBuddy.domain.user.Country;
+import com.example.HiBuddy.domain.user.Major;
 import lombok.*;
 
 public class UsersRequestDto {
@@ -27,7 +28,7 @@ public class UsersRequestDto {
     @AllArgsConstructor
     public static class UserOnboardingDto {
         private Country country;
-        private String major;
+        private Major major;
         private String nickname;
     }
 }

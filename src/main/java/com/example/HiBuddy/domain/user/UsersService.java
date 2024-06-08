@@ -1,19 +1,73 @@
 package com.example.HiBuddy.domain.user;
 
+import com.example.HiBuddy.domain.image.Images;
+import com.example.HiBuddy.domain.image.ImagesRepository;
+import com.example.HiBuddy.domain.image.ImagesService;
+import com.example.HiBuddy.domain.post.Posts;
+import com.example.HiBuddy.domain.post.PostsConverter;
+import com.example.HiBuddy.domain.post.PostsRepository;
+import com.example.HiBuddy.domain.post.dto.response.PostsResponseDto;
+import com.example.HiBuddy.domain.postLike.PostLikesRepository;
+import com.example.HiBuddy.domain.scrap.Scraps;
+import com.example.HiBuddy.domain.scrap.ScrapsConverter;
+import com.example.HiBuddy.domain.scrap.ScrapsRepository;
+import com.example.HiBuddy.domain.scrap.response.ScrapsResponseDto;
 import com.example.HiBuddy.domain.user.dto.request.UsersRequestDto;
+import com.example.HiBuddy.domain.user.dto.response.UsersResponseDto;
 import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
+import com.example.HiBuddy.global.response.exception.handler.PostsHandler;
 import com.example.HiBuddy.global.response.exception.handler.UsersHandler;
-import com.example.HiBuddy.global.security.UserDetailsImpl;
+import com.example.HiBuddy.global.s3.S3Service;
+import com.example.HiBuddy.global.s3.dto.S3Result;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.example.HiBuddy.domain.post.PostsService.getCreatedAt;
 
 @Service
 @RequiredArgsConstructor
 public class UsersService {
     private final UsersRepository usersRepository;
+    private final ImagesService imagesService;
+    private final ImagesRepository imagesRepository;
+    private final S3Service s3Service;
+    private final PostsRepository postsRepository;
+    private final PostLikesRepository postLikesRepository;
+    private final ScrapsRepository scrapsRepository;
+
+    public Optional<UsersResponseDto.UsersMyPageDto> getUserDTOById(Long id) {
+        return usersRepository.findById(id).map(user -> {
+            Hibernate.initialize(user.getProfileImage()); // Lazy-loaded 관계 초기화
+            return new UsersResponseDto.UsersMyPageDto(
+                    user.getNickname(),
+                    user.getCountry(),
+                    user.getMajor(),
+                    user.getProfileImage() != null ? user.getProfileImage() : null
+            );
+        });
+    }
+
+    @Transactional
+    public Long getUserId(UserDetails user) {
+        String username = user.getUsername();
+        Users users = usersRepository.findByUsername(username)
+                .orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+        return users.getId();
+    }
+
 
     @Transactional
     public void deleteUser(UserDetails userDetails) {
@@ -47,13 +101,85 @@ public class UsersService {
         return dto;
     }
 
+
     @Transactional
-    public Long getUserId(UserDetails user) {
-        String username = user.getUsername();
-        Users users = usersRepository.findByUsername(username)
-                .orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
-        return users.getId();
+    public Images uploadProfileImage(MultipartFile file, Long userId) {
+        Users user = usersRepository.findById(userId).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+
+        // 기존 프로필 이미지 삭제
+        if (user.getProfileImage() != null) {
+            imagesService.deleteImages(user.getProfileImage().getId());
+        }
+
+        // 새로운 프로필 이미지 업로드
+        S3Result s3Result = s3Service.uploadFile(file);
+
+        Images newImage = new Images();
+        newImage.setName(file.getOriginalFilename());
+        newImage.setUrl(s3Result.getFileUrl());
+        newImage.setType(file.getContentType());
+        newImage.setUser(user);
+
+        Images savedImage = imagesRepository.save(newImage);
+
+        // 사용자 엔티티에 프로필 이미지 설정
+        user.setProfileImage(savedImage);
+        usersRepository.save(user);
+
+        return savedImage;
     }
+
+    @Transactional(readOnly = true)
+    public PostsResponseDto.PostsInfoPageDto getPostsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Posts> postsPage = postsRepository.findByUserId(userId, pageable);
+
+        if (postsPage.isEmpty()) {
+            throw new PostsHandler(ErrorStatus.POST_NOT_FOUND);
+        }
+
+        List<PostsResponseDto.PostsInfoDto> postsInfoDtoList = postsPage.getContent().stream()
+                .map(post -> {
+                    Users user = post.getUser();
+                    boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
+                    boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
+                    String createdAt = getCreatedAt(post.getCreatedAt());
+
+                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt);
+
+                })
+                .collect(Collectors.toList());
+
+        return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList, postsPage.getTotalPages(), (int) postsPage.getTotalElements(),
+                postsPage.isFirst(), postsPage.isLast(), postsPage.getSize(), postsPage.getNumber(), postsPage.getNumberOfElements());
+    }
+
+
+    @Transactional
+    public ScrapsResponseDto.ScrapsInfoPageDto getScrapsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Scraps> scrapsPage = scrapsRepository.findByUserId(userId, pageable);
+
+        if (scrapsPage.isEmpty()) {
+            throw new PostsHandler(ErrorStatus.POST_SCRAP_LIST_NOT_FOUND);
+        }
+
+        List<ScrapsResponseDto.ScrapsInfoDto> scrapsInfoDtoList = scrapsPage.getContent().stream()
+                .map(post -> {
+                    Users user = post.getUser();
+                    boolean checkLike = postLikesRepository.existsByUserAndPost(user, post.getPost());
+                    boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post.getPost());
+                    String createdAt = getCreatedAt(post.getCreatedAt());
+
+                    return ScrapsConverter.toScrabsInfoResultDto(post.getPost(), user, checkLike, checkScrap, createdAt);
+
+                })
+                .collect(Collectors.toList());
+
+        return ScrapsConverter.toScrabsInfoResultPageDto(scrapsInfoDtoList, scrapsPage.getTotalPages(), (int) scrapsPage.getTotalElements(),
+                scrapsPage.isFirst(), scrapsPage.isLast(), scrapsPage.getSize(), scrapsPage.getNumber(), scrapsPage.getNumberOfElements());
+    }
+
 }
 
 

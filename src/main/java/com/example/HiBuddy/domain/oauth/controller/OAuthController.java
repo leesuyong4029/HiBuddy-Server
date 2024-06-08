@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -36,13 +35,10 @@ public class OAuthController {
         headers.set("Authorization", "Bearer " + tokenDto.getAccessToken());
         headers.add("Access-Control-Expose-Headers", "Authorization");
 
-        // ResponseCookie 설정
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", tokenDto.getRefreshToken())
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", tokenDto.getRefreshToken())
                 .httpOnly(true)
-                .secure(false) // 로컬 개발에서는 false, 프로덕션에서는 true로 설정
-                .sameSite("None")
+                .maxAge(604800000L)
                 .path("/")
-                .maxAge(7 * 24 * 60 * 60)
                 .build();
         headers.add(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 

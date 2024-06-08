@@ -3,6 +3,7 @@ package com.example.HiBuddy.domain.image;
 import com.example.HiBuddy.domain.post.Posts;
 import com.example.HiBuddy.domain.user.Users;
 import com.example.HiBuddy.global.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ public class Images extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,5 +1,6 @@
 package com.example.HiBuddy.domain.comment.dto.response;
 
+import com.example.HiBuddy.domain.image.Images;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class CommentsResponseDto {
     public static class UserDto {
         private Long userId;
         private String nickname;
-        private String profileUrl;
+        private Images profileUrl;
     }
 
     @Builder
@@ -36,7 +37,7 @@ public class CommentsResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CommentsInfoPageDto {
-        private List<CommentDto> result;
+        private List<CommentDto> comments;
         private int totalPages;
         private int totalElements;
         private boolean isFirst;
