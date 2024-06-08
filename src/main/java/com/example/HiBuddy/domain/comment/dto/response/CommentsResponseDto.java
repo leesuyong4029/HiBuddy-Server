@@ -37,7 +37,7 @@ public class CommentsResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CommentsInfoPageDto {
-        private List<CommentDto> result;
+        private List<CommentDto> comments;
         private int totalPages;
         private int totalElements;
         private boolean isFirst;

@@ -75,7 +75,7 @@ public class PostsConverter {
                                                                             boolean isFirst, boolean isLast, int size, int number, int numberOfElements) {
 
         return PostsResponseDto.PostsInfoPageDto.builder()
-                .result(postsInfoDtoList)
+                .posts(postsInfoDtoList)
                 .totalPages(totalPages)
                 .totalElements(totalElements)
                 .isFirst(isFirst)

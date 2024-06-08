@@ -7,19 +7,37 @@ import lombok.*;
 import java.util.List;
 
 public class ScrapsResponseDto {
-    @Getter
-    @Setter
+
     @Builder
+    @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ScrabsDto {
+    public static class ScrapsInfoDto {
         private Long postId;
-        private int likeNum;
-        private boolean checkLike;
-        private boolean checkScrab;
-        private boolean checkMine;
+        private String title;
+        private String content;
         private String createdAt;
-        private UsersResponseDto.UsersPostDto user;
-        private List<PostsResponseDto.PostImageDto> postImages;
+        private Integer likeNum;
+        private Integer commentNum;
+        private boolean isAuthor;
+        private boolean checkLike;
+        private boolean checkScrap;
+        private PostsResponseDto.UserDto user;
+        private List<PostsResponseDto.ImageDto> postImages;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ScrapsInfoPageDto {
+        private List<ScrapsInfoDto> posts;
+        private int totalPages;
+        private int totalElements;
+        private boolean isFirst;
+        private boolean isLast;
+        private int size;
+        private int number;
+        private int numberOfElements;
     }
 }

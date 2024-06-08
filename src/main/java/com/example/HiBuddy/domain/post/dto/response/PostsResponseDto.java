@@ -13,22 +13,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 public class PostsResponseDto {
-    @Getter
-    @Setter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PostsDto {
-        private Long postId;
-        private int likeNum;
-        private int commentNum;
-        private boolean checkLike;
-        private boolean checkScrab;
-        private boolean checkMine;
-        private String createdAt;
-        private UsersResponseDto.UsersPostDto user;
-        private List<PostImageDto> postImages;
-    }
 
     @Getter
     @Setter
@@ -92,7 +76,7 @@ public class PostsResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostsInfoPageDto {
-        private List<PostsInfoDto> result;
+        private List<PostsInfoDto> posts;
         private int totalPages;
         private int totalElements;
         private boolean isFirst;
@@ -100,6 +84,5 @@ public class PostsResponseDto {
         private int size;
         private int number;
         private int numberOfElements;
-
     }
 }

@@ -4,17 +4,18 @@ import com.example.HiBuddy.domain.image.Images;
 import com.example.HiBuddy.domain.image.ImagesRepository;
 import com.example.HiBuddy.domain.image.ImagesService;
 import com.example.HiBuddy.domain.post.Posts;
+import com.example.HiBuddy.domain.post.PostsConverter;
 import com.example.HiBuddy.domain.post.PostsRepository;
 import com.example.HiBuddy.domain.post.dto.response.PostsResponseDto;
+import com.example.HiBuddy.domain.postLike.PostLikesRepository;
 import com.example.HiBuddy.domain.scrap.Scraps;
+import com.example.HiBuddy.domain.scrap.ScrapsConverter;
 import com.example.HiBuddy.domain.scrap.ScrapsRepository;
 import com.example.HiBuddy.domain.scrap.response.ScrapsResponseDto;
 import com.example.HiBuddy.domain.user.dto.request.UsersRequestDto;
 import com.example.HiBuddy.domain.user.dto.response.UsersResponseDto;
-import com.example.HiBuddy.global.response.PagedResponse;
 import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
 import com.example.HiBuddy.global.response.exception.handler.PostsHandler;
-import com.example.HiBuddy.global.response.exception.handler.ScrapsHandler;
 import com.example.HiBuddy.global.response.exception.handler.UsersHandler;
 import com.example.HiBuddy.global.s3.S3Service;
 import com.example.HiBuddy.global.s3.dto.S3Result;
@@ -34,6 +35,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.HiBuddy.domain.post.PostsService.getCreatedAt;
+
 @Service
 @RequiredArgsConstructor
 public class UsersService {
@@ -42,6 +45,7 @@ public class UsersService {
     private final ImagesRepository imagesRepository;
     private final S3Service s3Service;
     private final PostsRepository postsRepository;
+    private final PostLikesRepository postLikesRepository;
     private final ScrapsRepository scrapsRepository;
 
     public Optional<UsersResponseDto.UsersMyPageDto> getUserDTOById(Long id) {
@@ -125,8 +129,8 @@ public class UsersService {
         return savedImage;
     }
 
-    @Transactional
-    public PagedResponse<PostsResponseDto.PostsDto> getPostsByUserId(Long userId, int page, int size) {
+    @Transactional(readOnly = true)
+    public PostsResponseDto.PostsInfoPageDto getPostsByUserId(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Posts> postsPage = postsRepository.findByUserId(userId, pageable);
 
@@ -134,91 +138,48 @@ public class UsersService {
             throw new PostsHandler(ErrorStatus.POST_NOT_FOUND);
         }
 
-        List<PostsResponseDto.PostsDto> postsDtos = postsPage.getContent().stream()
-                .map(this::convertToDto)
+        List<PostsResponseDto.PostsInfoDto> postsInfoDtoList = postsPage.getContent().stream()
+                .map(post -> {
+                    Users user = post.getUser();
+                    boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
+                    boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
+                    String createdAt = getCreatedAt(post.getCreatedAt());
+
+                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt);
+
+                })
                 .collect(Collectors.toList());
 
-        return new PagedResponse<>(
-                postsDtos,
-                postsPage.getNumber(),
-               /* postsPage.getSize(),*/
-                postsPage.getTotalElements(),
-                postsPage.getTotalPages(),
-                postsPage.isFirst(),
-                postsPage.isLast()
-        );
+        return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList, postsPage.getTotalPages(), (int) postsPage.getTotalElements(),
+                postsPage.isFirst(), postsPage.isLast(), postsPage.getSize(), postsPage.getNumber(), postsPage.getNumberOfElements());
     }
-    private PostsResponseDto.PostsDto convertToDto(Posts post) {
-        List<PostsResponseDto.PostImageDto> postImages = post.getPostImageList().stream()
-                .map(image -> new PostsResponseDto.PostImageDto(image.getId(), image.getUrl()))
-                .limit(3)
-                .collect(Collectors.toList());
 
-        return PostsResponseDto.PostsDto.builder()
-                .postId(post.getId())
-                .likeNum(post.getPostLikeList().size())
-                /*.commentNum(post.getComments().size())*/ // 아직 구현 안되어 있음
-                .checkLike(false)
-                .checkScrab(false)
-                .checkMine(true)
-                .createdAt(post.getCreatedAt().toString())
-                .user(new UsersResponseDto.UsersPostDto(
-                        post.getUser().getId(),
-                        post.getUser().getCountry(),
-                        post.getUser().getMajor(),
-                        post.getUser().getNickname()
-                ))
-                .postImages(postImages)
-                .build();
-    }
 
     @Transactional
-    public PagedResponse<ScrapsResponseDto.ScrabsDto> getScrabsByUserId(Long userId, int page, int size) {
+    public ScrapsResponseDto.ScrapsInfoPageDto getScrapsByUserId(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Scraps> scrabsPage = scrapsRepository.findByUserId(userId, pageable);
+        Page<Scraps> scrapsPage = scrapsRepository.findByUserId(userId, pageable);
 
-        if (scrabsPage.isEmpty()) {
-            throw new ScrapsHandler(ErrorStatus.POST_SCRAP_LIST_NOT_FOUND);
+        if (scrapsPage.isEmpty()) {
+            throw new PostsHandler(ErrorStatus.POST_SCRAP_LIST_NOT_FOUND);
         }
 
-        List<ScrapsResponseDto.ScrabsDto> scrabsDtos = scrabsPage.getContent().stream()
-                .map(scrab -> convertToScrabsDto(scrab.getPost()))
+        List<ScrapsResponseDto.ScrapsInfoDto> scrapsInfoDtoList = scrapsPage.getContent().stream()
+                .map(post -> {
+                    Users user = post.getUser();
+                    boolean checkLike = postLikesRepository.existsByUserAndPost(user, post.getPost());
+                    boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post.getPost());
+                    String createdAt = getCreatedAt(post.getCreatedAt());
+
+                    return ScrapsConverter.toScrabsInfoResultDto(post.getPost(), user, checkLike, checkScrap, createdAt);
+
+                })
                 .collect(Collectors.toList());
 
-        return new PagedResponse<>(
-                scrabsDtos,
-                scrabsPage.getNumber(),
-                /*scrabsPage.getSize(),*/
-                scrabsPage.getTotalElements(),
-                scrabsPage.getTotalPages(),
-                scrabsPage.isFirst(),
-                scrabsPage.isLast()
-        );
+        return ScrapsConverter.toScrabsInfoResultPageDto(scrapsInfoDtoList, scrapsPage.getTotalPages(), (int) scrapsPage.getTotalElements(),
+                scrapsPage.isFirst(), scrapsPage.isLast(), scrapsPage.getSize(), scrapsPage.getNumber(), scrapsPage.getNumberOfElements());
     }
 
-    private ScrapsResponseDto.ScrabsDto convertToScrabsDto(Posts post) {
-        List<PostsResponseDto.PostImageDto> postImages = post.getPostImageList().stream()
-                .map(image -> new PostsResponseDto.PostImageDto(image.getId(), image.getUrl()))
-                .limit(3)
-                .collect(Collectors.toList());
-
-        return ScrapsResponseDto.ScrabsDto.builder()
-                .postId(post.getId())
-                .likeNum(post.getPostLikeList().size())
-                // .commentNum(post.getComments().size()) // Uncomment if comments are available
-                .checkLike(false)
-                .checkScrab(true)
-                .checkMine(false)
-                .createdAt(post.getCreatedAt().toString())
-                .user(new UsersResponseDto.UsersPostDto(
-                        post.getUser().getId(),
-                        post.getUser().getCountry(),
-                        post.getUser().getMajor(),
-                        post.getUser().getNickname()
-                ))
-                .postImages(postImages)
-                .build();
-    }
 }
 
 
