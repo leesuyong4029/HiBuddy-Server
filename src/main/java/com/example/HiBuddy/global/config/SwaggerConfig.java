@@ -31,6 +31,7 @@ public class SwaggerConfig {
                         .bearerFormat("JWT"));
 
         Server server = new Server();
+
         server.setUrl("https://www.hibuddyinha.shop");
 
         return new OpenAPI()
