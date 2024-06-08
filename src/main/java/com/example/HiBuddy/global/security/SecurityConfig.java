@@ -56,7 +56,8 @@ public class SecurityConfig { // Servlet Container의 SecurityConfig 생성
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://hi-buddy.vercel.app"));
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://hi-buddy.vercel.app", "https://www.hibuddyinha.shop"));
+
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
