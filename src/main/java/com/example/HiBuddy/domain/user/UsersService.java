@@ -151,7 +151,7 @@ public class UsersService {
                 .collect(Collectors.toList());
 
         return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList, postsPage.getTotalPages(), (int) postsPage.getTotalElements(),
-                postsPage.isFirst(), postsPage.isLast(), postsPage.getSize(), postsPage.getNumber(), postsPage.getNumberOfElements());
+                postsPage.isFirst(), postsPage.isLast(), postsPage.getNumber(), postsPage.getNumberOfElements());
     }
 
 

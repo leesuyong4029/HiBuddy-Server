@@ -1,8 +1,6 @@
 package com.example.HiBuddy.domain.post.dto.response;
 
-
 import com.example.HiBuddy.domain.image.Images;
-import com.example.HiBuddy.domain.user.dto.response.UsersResponseDto;
 import lombok.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -81,7 +79,6 @@ public class PostsResponseDto {
         private int totalElements;
         private boolean isFirst;
         private boolean isLast;
-        private int size;
         private int number;
         private int numberOfElements;
     }

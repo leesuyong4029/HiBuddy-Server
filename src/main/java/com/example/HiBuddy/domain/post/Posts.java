@@ -58,14 +58,15 @@ public class Posts extends BaseEntity {
     private Integer likeNum;
 
     public void incrementLikeNum() {
+        if (likeNum == null) {
+            likeNum = 0;
+        }
         this.likeNum++;
     }
 
     public void decrementLikeNum() {
         if (this.likeNum > 0) {
             this.likeNum--;
-        } else {
-            throw new PostLikesHandler(ErrorStatus.POSTLIKE_NOT_FOUND);
         }
     }
 }
