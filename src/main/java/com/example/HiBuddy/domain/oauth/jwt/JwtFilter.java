@@ -1,6 +1,9 @@
 package com.example.HiBuddy.domain.oauth.jwt;
 
 import com.example.HiBuddy.domain.user.Users;
+import com.example.HiBuddy.global.response.ApiResponse;
+import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,6 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -33,15 +37,13 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().print("access token expired");
+            setUnauthorizedResponse(response, ErrorStatus.EXPIRED_JWT_EXCEPTION);
             return;
         }
 
         String category = jwtUtil.getCategory(accessToken);
         if (!"Authorization".equals(category)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().print("invalid access token");
+            setUnauthorizedResponse(response, ErrorStatus.INVALID_ACCESS_TOKEN);
             return;
         }
 
@@ -53,6 +55,19 @@ public class JwtFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
+    }
+
+    private void setUnauthorizedResponse(HttpServletResponse response, ErrorStatus errorStatus) throws IOException {
+        ApiResponse<Object> apiResponse = ApiResponse.onFailure(
+                errorStatus.getCode(),
+                errorStatus.getMessage(),
+                null
+        );
+
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
     }
 }
 

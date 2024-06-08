@@ -45,7 +45,7 @@ public class PostsService {
     private final ScrapsRepository scrapsRepository;
 
     // 시간 구하는 메서드
-    public String getCreatedAt(LocalDateTime createdAt) {
+    public static String getCreatedAt(LocalDateTime createdAt) {
 
         // 서버시간을 UTC로 설정
         ZoneId serverZone = ZoneId.systemDefault(); // 시스템 기본 시간대를 사용
@@ -134,6 +134,10 @@ public class PostsService {
             throw new PostsHandler(ErrorStatus.POST_CONTENT_MAX_LENGTH_500);
         }
 
+        if (request.getImageIds().size() > 3) {
+            throw new PostsHandler(ErrorStatus.POST_IMAGE_LIMIT_EXCEEDED);
+        }
+
         if (!user.getId().equals(post.getUser().getId())) {
             throw new UsersHandler(ErrorStatus.POST_NOT_AUTHORIZED);
         }
@@ -202,7 +206,7 @@ public class PostsService {
                 .collect(Collectors.toList());
 
         return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList, postsPage.getTotalPages(), (int) postsPage.getTotalElements(),
-                postsPage.isFirst(), postsPage.isLast(), postsPage.getSize(), postsPage.getNumber(), postsPage.getNumberOfElements());
+                postsPage.isFirst(), postsPage.isLast(), postsPage.getNumber(), postsPage.getNumberOfElements());
     }
 
     // 좋아요 생성 메서드
@@ -239,10 +243,10 @@ public class PostsService {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new PostLikesHandler(ErrorStatus.POSTLIKE_NOT_FOUND));
 
-        PostLikes postLikes = postLikesRepository.findByPostIdAndUserId(userId, postId)
+        PostLikes postLikes = postLikesRepository.findByPostIdAndUserId(postId, userId)
                 .orElseThrow(() -> new PostLikesHandler(ErrorStatus.POSTLIKE_NOT_FOUND));
 
-        if (post.getLikeNum() == 0) {
+        if (post.getLikeNum() == null || post.getLikeNum() == 0) {
             throw new PostLikesHandler(ErrorStatus.POSTLIKE_DELETE_FAIL);
         }
 
@@ -287,18 +291,25 @@ public class PostsService {
 
     // 게시글 제목으로 검색하기 메서드
     @Transactional(readOnly = true)
-    public List<PostsResponseDto.PostsInfoDto> searchPostByTitle(String keyword) {
-        List<Posts> posts = postsRepository.findByTitleContaining(keyword);
+    public PostsResponseDto.PostsInfoPageDto searchPostByTitle(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Posts> postsPage = postsRepository.findByTitle(keyword, pageable);
 
-        return posts.stream()
+        if (postsPage.isEmpty()) {
+            throw new PostsHandler(ErrorStatus.POST_TITLE_NOT_FOUND);
+        }
+
+        List<PostsResponseDto.PostsInfoDto> postsInfoDtoList = postsPage.getContent().stream()
                 .map(post -> {
                     Users user = post.getUser();
                     boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
                     boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
                     String createdAt = getCreatedAt(post.getCreatedAt());
 
-                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, post.getCreatedAt().toString());
+                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt);
                 })
                 .collect(Collectors.toList());
+        return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList, postsPage.getTotalPages(), (int) postsPage.getTotalElements(),
+                postsPage.isFirst(), postsPage.isLast(), postsPage.getNumber(), postsPage.getNumberOfElements());
     }
 }

@@ -15,7 +15,7 @@ public class CommentsConverter {
         return CommentsResponseDto.UserDto.builder()
                 .userId(user.getId())
                 .nickname(user.getNickname())
-                .profileUrl(user.getProfileImageUrl())
+                .profileUrl(user.getProfileImage())
                 .build();
     }
 
@@ -40,14 +40,13 @@ public class CommentsConverter {
     }
 
     public static CommentsResponseDto.CommentsInfoPageDto toCommentsInfoResultPageDto(List<CommentsResponseDto.CommentDto> commentInfoDtoList, int totalPages, int totalElements,
-                                                                                       boolean isFirst, boolean isLast, int size, int number, int numberOfElements) {
+                                                                                       boolean isFirst, boolean isLast, int number, int numberOfElements) {
         return CommentsResponseDto.CommentsInfoPageDto.builder()
-                .result(commentInfoDtoList)
+                .comments(commentInfoDtoList)
                 .totalPages(totalPages)
                 .totalElements(totalElements)
                 .isFirst(isFirst)
                 .isLast(isLast)
-                .size(size)
                 .number(number)
                 .numberOfElements(numberOfElements)
                 .build();

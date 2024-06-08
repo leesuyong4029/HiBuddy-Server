@@ -2,6 +2,7 @@ package com.example.HiBuddy.domain.post;
 
 import com.example.HiBuddy.domain.comment.Comments;
 import com.example.HiBuddy.domain.image.Images;
+
 import com.example.HiBuddy.domain.postLike.PostLikes;
 import com.example.HiBuddy.domain.scrap.Scraps;
 import com.example.HiBuddy.domain.user.Users;
@@ -57,14 +58,15 @@ public class Posts extends BaseEntity {
     private Integer likeNum;
 
     public void incrementLikeNum() {
+        if (likeNum == null) {
+            likeNum = 0;
+        }
         this.likeNum++;
     }
 
     public void decrementLikeNum() {
         if (this.likeNum > 0) {
             this.likeNum--;
-        } else {
-            throw new PostLikesHandler(ErrorStatus.POSTLIKE_NOT_FOUND);
         }
     }
 }

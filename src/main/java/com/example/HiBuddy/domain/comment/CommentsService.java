@@ -92,7 +92,7 @@ public class CommentsService {
 
         return CommentsConverter.toCommentsInfoResultPageDto(commentInfoDtoList, commentsPage.getTotalPages(),
                 (int) commentsPage.getTotalElements(), commentsPage.isFirst(), commentsPage.isLast(),
-                commentsPage.getSize(), commentsPage.getNumber(), commentsPage.getNumberOfElements());
+                commentsPage.getNumber(), commentsPage.getNumberOfElements());
 
     }
 

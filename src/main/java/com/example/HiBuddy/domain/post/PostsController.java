@@ -188,25 +188,15 @@ public class PostsController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "SEARCH401", description = "존재하지 않는 게시글 제목입니다.", content = @Content(schema = @Schema(implementation = ApiResponses.class))),
 
     })
-    public ApiResponse<List<PostsResponseDto.PostsInfoDto>> searchPostsByTtile(@RequestParam String keyword) {
+    public ApiResponse<PostsResponseDto.PostsInfoPageDto> searchPostsByTtile(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(defaultValue = "created_at.desc") String sort) {
+        int pageNumber = page - 1;
 
-        List<PostsResponseDto.PostsInfoDto> postsInfoDtoList = postsService.searchPostByTitle(keyword);
-        return ApiResponse.onSuccess(postsInfoDtoList);
-    }
-
-    @GetMapping("/search/posts/{postId}")
-    @Operation(summary = "검색한 게시글 조회 API", description = "게시글의 id를 이용하여 검색 성공한 특정 게시글의 정보 조회")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST401", description = "존재하지 않는 게시글입니다.", content = @Content(schema = @Schema(implementation = ApiResponses.class))),
-    })
-    @Parameters({
-            @Parameter(name = "postId", description = "게시글의 id"),
-    })
-    public ApiResponse<PostsResponseDto.PostsInfoDto> getPostInfoResultBySearch(@AuthenticationPrincipal UserDetails user, @PathVariable(name = "postId") Long postId) {
-
-        PostsResponseDto.PostsInfoDto postsInfoDto = postsService.getPostInfoResult(usersService.getUserId(user), postId);
-        return ApiResponse.onSuccess(postsInfoDto);
+        PostsResponseDto.PostsInfoPageDto postsInfoPage = postsService.searchPostByTitle(keyword, pageNumber, limit);
+        return ApiResponse.onSuccess(postsInfoPage);
     }
 
 }

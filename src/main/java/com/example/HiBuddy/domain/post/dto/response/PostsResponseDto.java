@@ -1,13 +1,26 @@
 package com.example.HiBuddy.domain.post.dto.response;
 
+import com.example.HiBuddy.domain.image.Images;
+import lombok.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 import java.util.List;
 
 public class PostsResponseDto {
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostImageDto {
+        private Long imageId;
+        private String imageUrl;
+    }
 
     @Builder
     @Getter
@@ -16,7 +29,7 @@ public class PostsResponseDto {
     public static class UserDto {
         private Long userId;
         private String nickname;
-        private String profileUrl;
+        private Images profileUrl;
     }
 
     @Builder
@@ -61,15 +74,12 @@ public class PostsResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostsInfoPageDto {
-        private List<PostsInfoDto> result;
+        private List<PostsInfoDto> posts;
         private int totalPages;
         private int totalElements;
         private boolean isFirst;
         private boolean isLast;
-        private int size;
         private int number;
         private int numberOfElements;
-
     }
-
 }

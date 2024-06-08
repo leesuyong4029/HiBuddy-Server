@@ -24,7 +24,7 @@ public class PostsConverter {
         return PostsResponseDto.UserDto.builder()
                 .userId(user.getId())
                 .nickname(user.getNickname())
-                .profileUrl(user.getProfileImageUrl())
+                .profileUrl(user.getProfileImage())
                 .build();
 
     }
@@ -72,15 +72,14 @@ public class PostsConverter {
     }
 
     public static PostsResponseDto.PostsInfoPageDto toPostInfoResultPageDto(List<PostsResponseDto.PostsInfoDto> postsInfoDtoList, int totalPages, int totalElements,
-                                                                            boolean isFirst, boolean isLast, int size, int number, int numberOfElements) {
+                                                                            boolean isFirst, boolean isLast, int number, int numberOfElements) {
 
         return PostsResponseDto.PostsInfoPageDto.builder()
-                .result(postsInfoDtoList)
+                .posts(postsInfoDtoList)
                 .totalPages(totalPages)
                 .totalElements(totalElements)
                 .isFirst(isFirst)
                 .isLast(isLast)
-                .size(size)
                 .number(number)
                 .numberOfElements(numberOfElements)
                 .build();
