@@ -21,5 +21,5 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     List<Posts> findTopThreePosts(Pageable pageable);
 
     @Query("SELECT p FROM Posts p WHERE p.title LIKE %:keyword%")
-    List<Posts> findByTitleContaining(@Param("keyword") String keyword);
+    Page<Posts> findByTitle(@Param("keyword") String keyword, Pageable pageable);
 }

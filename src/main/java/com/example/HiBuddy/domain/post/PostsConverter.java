@@ -72,7 +72,7 @@ public class PostsConverter {
     }
 
     public static PostsResponseDto.PostsInfoPageDto toPostInfoResultPageDto(List<PostsResponseDto.PostsInfoDto> postsInfoDtoList, int totalPages, int totalElements,
-                                                                            boolean isFirst, boolean isLast, int size, int number, int numberOfElements) {
+                                                                            boolean isFirst, boolean isLast, int number, int numberOfElements) {
 
         return PostsResponseDto.PostsInfoPageDto.builder()
                 .posts(postsInfoDtoList)
@@ -80,7 +80,6 @@ public class PostsConverter {
                 .totalElements(totalElements)
                 .isFirst(isFirst)
                 .isLast(isLast)
-                .size(size)
                 .number(number)
                 .numberOfElements(numberOfElements)
                 .build();

@@ -42,7 +42,6 @@ public class CommentsResponseDto {
         private int totalElements;
         private boolean isFirst;
         private boolean isLast;
-        private int size;
         private int number;
         private int numberOfElements;
     }
