@@ -47,6 +47,7 @@ public class SecurityConfig { // Servlet Container의 SecurityConfig 생성
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/v1/auth/**","/v1/info/**").permitAll()
                         .requestMatchers("/v1/users/**", "/v1/tests/**","/v1/images/**", "/v1/thread/**").authenticated()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
