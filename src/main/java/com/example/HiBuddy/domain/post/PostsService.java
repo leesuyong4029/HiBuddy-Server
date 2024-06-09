@@ -25,11 +25,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,26 +45,8 @@ public class PostsService {
     // 시간 구하는 메서드
     public static String getCreatedAt(LocalDateTime createdAt) {
 
-        // 서버시간을 UTC로 설정
-        ZoneId serverZone = ZoneId.systemDefault(); // 시스템 기본 시간대를 사용
-        LocalDateTime now = ZonedDateTime.now(serverZone).toLocalDateTime();
-
-        Duration duration = Duration.between(createdAt, now);
-
-        long seconds = duration.getSeconds();
-        long minutes = duration.toMinutes();
-        long hours = duration.toHours();
-        long days = duration.toDays();
-
-        if (minutes < 1) {
-            return seconds + "s ago";
-        } else if (minutes < 60) {
-            return minutes + "m ago";
-        } else if (hours < 24) {
-            return hours + "h ago";
-        } else {
-            return days + "d ago";
-        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
+        return createdAt.format(formatter);
     }
 
     // 게시글 생성 메서드
@@ -99,7 +79,7 @@ public class PostsService {
 
         newPost.getPostImageList().addAll(images); // 양방향 연관관계 설정
 
-        return PostsConverter.toPostInfoResultDto(newPost, user, false, false, newPost.getCreatedAt().toString());
+        return PostsConverter.toPostInfoResultDto(newPost, user, false, false, getCreatedAt(newPost.getCreatedAt()));
     }
 
     // 특정 게시글 조회 메서드
