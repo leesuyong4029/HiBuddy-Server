@@ -30,7 +30,7 @@ import java.util.Collections;
 public class UsersController {
     private final UsersService usersService;
 
-    @GetMapping("/myPage")
+    @GetMapping
     @Operation(summary = "유저 정보 조회 API", description = "유저 정보를 조회합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "성공"),
