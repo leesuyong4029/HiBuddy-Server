@@ -39,8 +39,10 @@ public class CommentsConverter {
                 .build();
     }
 
-    public static CommentsResponseDto.CommentsInfoPageDto toCommentsInfoResultPageDto(List<CommentsResponseDto.CommentDto> commentInfoDtoList, int totalPages, int totalElements,
-                                                                                       boolean isFirst, boolean isLast, int number, int numberOfElements) {
+    public static CommentsResponseDto.CommentsInfoPageDto toCommentsInfoResultPageDto(
+            List<CommentsResponseDto.CommentDto> commentInfoDtoList, int totalPages, int totalElements,
+            boolean isFirst, boolean isLast, int number, int numberOfElements) {
+
         return CommentsResponseDto.CommentsInfoPageDto.builder()
                 .comments(commentInfoDtoList)
                 .totalPages(totalPages)
