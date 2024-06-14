@@ -58,9 +58,9 @@ public class CommentsService {
 
     // 댓글 조회 API
     @Transactional(readOnly = true)
-    public CommentsResponseDto.CommentsInfoPageDto getCommentsInfoResultsOnPage(int page, int size) {
+    public CommentsResponseDto.CommentsInfoPageDto getCommentsInfoResultsOnPage(Long postId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
-        Page<Comments> commentsPage = commentsRepository.findAll(pageRequest);
+        Page<Comments> commentsPage = commentsRepository.findByPostId(postId, pageRequest);
 
         List<CommentsResponseDto.CommentDto> commentInfoDtoList = commentsPage.getContent().stream()
                 .map(comment -> {
