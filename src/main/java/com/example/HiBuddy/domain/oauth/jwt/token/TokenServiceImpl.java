@@ -76,6 +76,8 @@ public class TokenServiceImpl implements TokenService {
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", newRefresh)
                 .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
                 .maxAge(604800000L)
                 .path("/")
                 .build();

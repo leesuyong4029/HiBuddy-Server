@@ -36,7 +36,7 @@ public class OAuthController {
         headers.add("Access-Control-Expose-Headers", "Authorization");
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", tokenDto.getRefreshToken())
-                .httpOnly(true)            
+                .httpOnly(true)
                 .sameSite("None")
                 .secure(true)
                 .maxAge(604800000L)

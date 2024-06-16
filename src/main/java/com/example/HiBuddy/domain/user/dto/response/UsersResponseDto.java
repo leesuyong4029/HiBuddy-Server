@@ -18,6 +18,18 @@ public class UsersResponseDto {
         private Images profileImage;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UsersChatDto {
+        private Long userId;
+        private String nickname;
+        private Country country;
+        private Major major;
+        private Images profileImage;
+    }
+
     @Getter
     @Setter
     @Builder
