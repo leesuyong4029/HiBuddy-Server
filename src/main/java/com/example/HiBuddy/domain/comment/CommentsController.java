@@ -51,13 +51,15 @@ public class CommentsController {
             @Parameter(name = "postId", description = "게시글의 id"),
     })
     public ApiResponse<CommentsResponseDto.CommentsInfoPageDto> getCommnetsInfoResultOnPage(
+            @AuthenticationPrincipal UserDetails user,
             @PathVariable Long postId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int limit) {
         int pageNumber = page - 1;
+        Long userId = usersService.getUserId(user);
 
         CommentsResponseDto.CommentsInfoPageDto commentsInfoPageDto =
-                commnetsService.getCommentsInfoResultsOnPage(postId, pageNumber, limit);
+                commnetsService.getCommentsInfoResultsOnPage(postId, userId, pageNumber, limit);
 
         CommentsResponseDto.CommentsInfoPageDto fixedCommentsInfoPageDto = CommentsResponseDto.CommentsInfoPageDto.builder()
                 .comments(commentsInfoPageDto.getComments())
