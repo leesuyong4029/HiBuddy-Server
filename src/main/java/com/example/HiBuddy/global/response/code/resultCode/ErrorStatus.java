@@ -63,7 +63,10 @@ public enum ErrorStatus implements BaseErrorCode {
     IMAGE_NOT_PROVIDED(HttpStatus.NOT_FOUND, "IMAGE403", "프로필 이미지가 존재하지 않습니다."),
 
     // Searchs
-    SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH401", "존재하지 않는 게시글 제목입니다.");
+    SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH401", "존재하지 않는 게시글 제목입니다."),
+
+    // Common
+    PAGE_NUM_STARTS_WITH_ONE(HttpStatus.BAD_REQUEST, "COMMON401", "페이지 번호는 1 이상이어야 합니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
