@@ -28,7 +28,7 @@ public class CommentsConverter {
     }
 
     public static CommentsResponseDto.CommentDto toCommentInfoResultDto(Comments comment, Posts post, Users user, String createdAt, boolean isAuthor) {
-        CommentsResponseDto.UserDto userDto = toUserDto(post.getUser());
+        CommentsResponseDto.UserDto userDto = toUserDto(comment.getUser());
 
         return CommentsResponseDto.CommentDto.builder()
                 .commentId(comment.getId())
