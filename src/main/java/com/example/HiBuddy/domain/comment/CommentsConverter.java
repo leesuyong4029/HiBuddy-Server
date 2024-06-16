@@ -27,27 +27,28 @@ public class CommentsConverter {
                 .build();
     }
 
-    public static CommentsResponseDto.CommentDto toCommentInfoResultDto(Comments comment, Posts post, Users user, String createdAt) {
+    public static CommentsResponseDto.CommentDto toCommentInfoResultDto(Comments comment, Posts post, Users user, String createdAt, boolean isAuthor) {
         CommentsResponseDto.UserDto userDto = toUserDto(post.getUser());
 
         return CommentsResponseDto.CommentDto.builder()
                 .commentId(comment.getId())
                 .comment(comment.getComment())
-                .isAuthor(true)
+                .isAuthor(isAuthor)
                 .user(userDto)
                 .createdAt(createdAt)
                 .build();
     }
 
-    public static CommentsResponseDto.CommentsInfoPageDto toCommentsInfoResultPageDto(List<CommentsResponseDto.CommentDto> commentInfoDtoList, int totalPages, int totalElements,
-                                                                                       boolean isFirst, boolean isLast, int size, int number, int numberOfElements) {
+    public static CommentsResponseDto.CommentsInfoPageDto toCommentsInfoResultPageDto(
+            List<CommentsResponseDto.CommentDto> commentInfoDtoList, int totalPages, int totalElements,
+            boolean isFirst, boolean isLast, int number, int numberOfElements) {
+
         return CommentsResponseDto.CommentsInfoPageDto.builder()
                 .comments(commentInfoDtoList)
                 .totalPages(totalPages)
                 .totalElements(totalElements)
                 .isFirst(isFirst)
                 .isLast(isLast)
-                .size(size)
                 .number(number)
                 .numberOfElements(numberOfElements)
                 .build();

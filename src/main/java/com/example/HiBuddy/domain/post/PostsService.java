@@ -25,11 +25,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,26 +45,8 @@ public class PostsService {
     // 시간 구하는 메서드
     public static String getCreatedAt(LocalDateTime createdAt) {
 
-        // 서버시간을 UTC로 설정
-        ZoneId serverZone = ZoneId.systemDefault(); // 시스템 기본 시간대를 사용
-        LocalDateTime now = ZonedDateTime.now(serverZone).toLocalDateTime();
-
-        Duration duration = Duration.between(createdAt, now);
-
-        long seconds = duration.getSeconds();
-        long minutes = duration.toMinutes();
-        long hours = duration.toHours();
-        long days = duration.toDays();
-
-        if (minutes < 1) {
-            return seconds + "s ago";
-        } else if (minutes < 60) {
-            return minutes + "m ago";
-        } else if (hours < 24) {
-            return hours + "h ago";
-        } else {
-            return days + "d ago";
-        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
+        return createdAt.format(formatter);
     }
 
     // 게시글 생성 메서드
@@ -99,7 +79,8 @@ public class PostsService {
 
         newPost.getPostImageList().addAll(images); // 양방향 연관관계 설정
 
-        return PostsConverter.toPostInfoResultDto(newPost, user, false, false, newPost.getCreatedAt().toString());
+        return PostsConverter.toPostInfoResultDto(newPost, user, false, false, getCreatedAt(newPost.getCreatedAt()), true
+        );
     }
 
     // 특정 게시글 조회 메서드
@@ -107,6 +88,7 @@ public class PostsService {
     public PostsResponseDto.PostsInfoDto getPostInfoResult(Long userId, Long postId) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new PostsHandler(ErrorStatus.POST_NOT_FOUND));
 
@@ -114,8 +96,9 @@ public class PostsService {
         boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
 
         String createdAt = getCreatedAt(post.getCreatedAt());
+        boolean isAuthor = post.getUser().getId().equals(userId);
 
-        return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt);
+        return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt, isAuthor);
     }
 
     // 게시글 수정 메서드
@@ -123,6 +106,7 @@ public class PostsService {
     public void updatePost(Long userId, Long postId, PostsRequestDto.UpdatePostRequestDto request) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new PostsHandler(ErrorStatus.POST_NOT_FOUND));
 
@@ -132,6 +116,10 @@ public class PostsService {
 
         if (request.getContent().length() > 500) {
             throw new PostsHandler(ErrorStatus.POST_CONTENT_MAX_LENGTH_500);
+        }
+
+        if (request.getImageIds().size() > 3) {
+            throw new PostsHandler(ErrorStatus.POST_IMAGE_LIMIT_EXCEEDED);
         }
 
         if (!user.getId().equals(post.getUser().getId())) {
@@ -163,8 +151,10 @@ public class PostsService {
     public void deletePost(Long userId, Long postId) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+
         Posts post = postsRepository.findByUserIdAndId(userId, postId)
                 .orElseThrow(() -> new PostsHandler(ErrorStatus.POST_NOT_FOUND));
+
         if (!user.getId().equals(post.getUser().getId())) {
             throw new UsersHandler(ErrorStatus.POST_NOT_AUTHORIZED);
         }
@@ -189,20 +179,39 @@ public class PostsService {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Posts> postsPage = postsRepository.findAll(pageRequest);
 
+        if (postsPage.isEmpty()) {
+            return PostsConverter.toPostInfoResultPageDto(
+                    List.of(),
+                    postsPage.getTotalPages(),
+                    (int) postsPage.getTotalElements(),
+                    postsPage.isFirst(),
+                    postsPage.isLast(),
+                    postsPage.getNumber() + 1,
+                    postsPage.getNumberOfElements()
+            );
+        }
+
         List<PostsResponseDto.PostsInfoDto> postsInfoDtoList = postsPage.getContent().stream()
                 .map(post -> {
                     Users user = post.getUser();
                     boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
                     boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
                     String createdAt = getCreatedAt(post.getCreatedAt());
+                    boolean isAuthor = post.getUser().getId().equals(user.getId());
 
-                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt);
+                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt, isAuthor);
 
                 })
                 .collect(Collectors.toList());
 
-        return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList, postsPage.getTotalPages(), (int) postsPage.getTotalElements(),
-                postsPage.isFirst(), postsPage.isLast(), postsPage.getSize(), postsPage.getNumber(), postsPage.getNumberOfElements());
+        return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList,
+                postsPage.getTotalPages(),
+                (int) postsPage.getTotalElements(),
+                postsPage.isFirst(),
+                postsPage.isLast(),
+                postsPage.getNumber() + 1,
+                postsPage.getNumberOfElements()
+        );
     }
 
     // 좋아요 생성 메서드
@@ -239,10 +248,10 @@ public class PostsService {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new PostLikesHandler(ErrorStatus.POSTLIKE_NOT_FOUND));
 
-        PostLikes postLikes = postLikesRepository.findByPostIdAndUserId(userId, postId)
+        PostLikes postLikes = postLikesRepository.findByPostIdAndUserId(postId, userId)
                 .orElseThrow(() -> new PostLikesHandler(ErrorStatus.POSTLIKE_NOT_FOUND));
 
-        if (post.getLikeNum() == 0) {
+        if (post.getLikeNum() == null || post.getLikeNum() == 0) {
             throw new PostLikesHandler(ErrorStatus.POSTLIKE_DELETE_FAIL);
         }
 
@@ -287,18 +296,41 @@ public class PostsService {
 
     // 게시글 제목으로 검색하기 메서드
     @Transactional(readOnly = true)
-    public List<PostsResponseDto.PostsInfoDto> searchPostByTitle(String keyword) {
-        List<Posts> posts = postsRepository.findByTitleContaining(keyword);
+    public PostsResponseDto.PostsInfoPageDto searchPostByTitle(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Posts> postsPage = postsRepository.findByTitle(keyword, pageable);
 
-        return posts.stream()
+        if (postsPage.isEmpty()) {
+            return PostsConverter.toPostInfoResultPageDto(
+                    List.of(),
+                    postsPage.getTotalPages(),
+                    (int) postsPage.getTotalElements(),
+                    postsPage.isFirst(),
+                    postsPage.isLast(),
+                    postsPage.getNumber() + 1,
+                    postsPage.getNumberOfElements()
+            );
+        }
+
+        List<PostsResponseDto.PostsInfoDto> postsInfoDtoList = postsPage.getContent().stream()
                 .map(post -> {
                     Users user = post.getUser();
                     boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
                     boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
                     String createdAt = getCreatedAt(post.getCreatedAt());
+                    boolean isAuthor = post.getUser().getId().equals(user.getId());
 
-                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, post.getCreatedAt().toString());
+                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt, isAuthor);
                 })
                 .collect(Collectors.toList());
+        return PostsConverter.toPostInfoResultPageDto(
+                postsInfoDtoList,
+                postsPage.getTotalPages(),
+                (int) postsPage.getTotalElements(),
+                postsPage.isFirst(),
+                postsPage.isLast(),
+                postsPage.getNumber() + 1,
+                postsPage.getNumberOfElements()
+        );
     }
 }

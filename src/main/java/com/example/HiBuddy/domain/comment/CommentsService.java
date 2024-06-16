@@ -17,10 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,28 +31,11 @@ public class CommentsService {
     private final PostsRepository postsRepository;
     private final CommentsRepository commentsRepository;
 
-    public String getCreatedAt(LocalDateTime createdAt) {
+    // 시간 구하는 메서드
+    public static String getCreatedAt(LocalDateTime createdAt) {
 
-        // 서버시간을 UTC로 설정
-        ZoneId serverZone = ZoneId.systemDefault(); // 시스템 기본 시간대를 사용
-        LocalDateTime now = ZonedDateTime.now(serverZone).toLocalDateTime();
-
-        Duration duration = Duration.between(createdAt, now);
-
-        long seconds = duration.getSeconds();
-        long minutes = duration.toMinutes();
-        long hours = duration.toHours();
-        long days = duration.toDays();
-
-        if (minutes < 1) {
-            return seconds + "s ago";
-        } else if (minutes < 60) {
-            return minutes + "m ago";
-        } else if (hours < 24) {
-            return hours + "h ago";
-        } else {
-            return days + "d ago";
-        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
+        return createdAt.format(formatter);
     }
 
     // 댓글 생성 API
@@ -72,27 +53,49 @@ public class CommentsService {
         Comments newComment = CommentsConverter.toCommentEntity(user, post, request);
         commentsRepository.save(newComment);
 
-        return CommentsConverter.toCommentInfoResultDto(newComment, post, user, newComment.getCreatedAt().toString());
+        boolean isAuthor = newComment.getUser().getId().equals(userId);
+
+        return CommentsConverter.toCommentInfoResultDto(newComment, post, user, getCreatedAt(newComment.getCreatedAt()), isAuthor);
     }
 
     // 댓글 조회 API
     @Transactional(readOnly = true)
-    public CommentsResponseDto.CommentsInfoPageDto getCommentsInfoResultsOnPage(int page, int size) {
+    public CommentsResponseDto.CommentsInfoPageDto getCommentsInfoResultsOnPage(Long postId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
-        Page<Comments> commentsPage = commentsRepository.findAll(pageRequest);
+        Page<Comments> commentsPage = commentsRepository.findByPostId(postId, pageRequest);
+
+        if (commentsPage.isEmpty()) {
+            return CommentsConverter.toCommentsInfoResultPageDto(
+                    List.of(),
+                    commentsPage.getTotalPages(),
+                    (int) commentsPage.getTotalElements(),
+                    commentsPage.isFirst(),
+                    commentsPage.isLast(),
+                    commentsPage.getNumber() + 1,
+                    commentsPage.getNumberOfElements()
+            );
+        }
 
         List<CommentsResponseDto.CommentDto> commentInfoDtoList = commentsPage.getContent().stream()
                 .map(comment -> {
                     Users user = comment.getUser();
                     Posts post = comment.getPost();
                     String createdAt = getCreatedAt(comment.getCreatedAt());
-                    return CommentsConverter.toCommentInfoResultDto(comment, post, user, createdAt);
+                    boolean isAuthor = comment.getUser().getId().equals(user.getId());
+
+                    return CommentsConverter.toCommentInfoResultDto(comment, comment.getPost(), user, createdAt, isAuthor);
                 })
                 .collect(Collectors.toList());
 
-        return CommentsConverter.toCommentsInfoResultPageDto(commentInfoDtoList, commentsPage.getTotalPages(),
-                (int) commentsPage.getTotalElements(), commentsPage.isFirst(), commentsPage.isLast(),
-                commentsPage.getSize(), commentsPage.getNumber(), commentsPage.getNumberOfElements());
+        return CommentsConverter.toCommentsInfoResultPageDto(
+                commentInfoDtoList,
+                commentsPage.getTotalPages(),
+                (int) commentsPage.getTotalElements(),
+                commentsPage.isFirst(),
+                commentsPage.isLast(),
+                commentsPage.getNumber() + 1,
+                commentsPage.getNumberOfElements()
+        );
 
     }
 

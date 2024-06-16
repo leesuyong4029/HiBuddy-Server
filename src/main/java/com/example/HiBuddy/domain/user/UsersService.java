@@ -15,7 +15,6 @@ import com.example.HiBuddy.domain.scrap.response.ScrapsResponseDto;
 import com.example.HiBuddy.domain.user.dto.request.UsersRequestDto;
 import com.example.HiBuddy.domain.user.dto.response.UsersResponseDto;
 import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
-import com.example.HiBuddy.global.response.exception.handler.PostsHandler;
 import com.example.HiBuddy.global.response.exception.handler.UsersHandler;
 import com.example.HiBuddy.global.s3.S3Service;
 import com.example.HiBuddy.global.s3.dto.S3Result;
@@ -135,7 +134,16 @@ public class UsersService {
         Page<Posts> postsPage = postsRepository.findByUserId(userId, pageable);
 
         if (postsPage.isEmpty()) {
-            throw new PostsHandler(ErrorStatus.POST_NOT_FOUND);
+            return PostsConverter.toPostInfoResultPageDto(
+                    List.of(),
+                    postsPage.getTotalPages(),
+                    (int) postsPage.getTotalElements(),
+                    postsPage.isFirst(),
+                    postsPage.isLast(),
+                    postsPage.getNumber() + 1,
+                    postsPage.getNumberOfElements()
+            );
+
         }
 
         List<PostsResponseDto.PostsInfoDto> postsInfoDtoList = postsPage.getContent().stream()
@@ -144,40 +152,65 @@ public class UsersService {
                     boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
                     boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
                     String createdAt = getCreatedAt(post.getCreatedAt());
+                    boolean isAuthor = post.getUser().getId().equals(user.getId());
 
-                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt);
+                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt, isAuthor);
 
                 })
                 .collect(Collectors.toList());
 
-        return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList, postsPage.getTotalPages(), (int) postsPage.getTotalElements(),
-                postsPage.isFirst(), postsPage.isLast(), postsPage.getSize(), postsPage.getNumber(), postsPage.getNumberOfElements());
+        return PostsConverter.toPostInfoResultPageDto(
+                postsInfoDtoList,
+                postsPage.getTotalPages(),
+                (int) postsPage.getTotalElements(),
+                postsPage.isFirst(),
+                postsPage.isLast(),
+                postsPage.getNumber() + 1,
+                postsPage.getNumberOfElements()
+        );
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ScrapsResponseDto.ScrapsInfoPageDto getScrapsByUserId(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Scraps> scrapsPage = scrapsRepository.findByUserId(userId, pageable);
 
         if (scrapsPage.isEmpty()) {
-            throw new PostsHandler(ErrorStatus.POST_SCRAP_LIST_NOT_FOUND);
+            return ScrapsConverter.toScrapsInfoResultPageDto(
+                    List.of(),
+                    scrapsPage.getTotalPages(),
+                    (int) scrapsPage.getTotalElements(),
+                    scrapsPage.isFirst(),
+                    scrapsPage.isLast(),
+                    scrapsPage.getNumber() + 1,
+                    scrapsPage.getNumberOfElements()
+            );
         }
 
         List<ScrapsResponseDto.ScrapsInfoDto> scrapsInfoDtoList = scrapsPage.getContent().stream()
-                .map(post -> {
+                .map(scrap -> {
+                    Posts post = scrap.getPost();
                     Users user = post.getUser();
-                    boolean checkLike = postLikesRepository.existsByUserAndPost(user, post.getPost());
-                    boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post.getPost());
+                    boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
+                    boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
                     String createdAt = getCreatedAt(post.getCreatedAt());
+                    boolean isAuthor = user.getId().equals(userId);
 
-                    return ScrapsConverter.toScrabsInfoResultDto(post.getPost(), user, checkLike, checkScrap, createdAt);
+                    return ScrapsConverter.toScrapsInfoResultDto(post, user, checkLike, checkScrap, createdAt, isAuthor);
 
                 })
                 .collect(Collectors.toList());
 
-        return ScrapsConverter.toScrabsInfoResultPageDto(scrapsInfoDtoList, scrapsPage.getTotalPages(), (int) scrapsPage.getTotalElements(),
-                scrapsPage.isFirst(), scrapsPage.isLast(), scrapsPage.getSize(), scrapsPage.getNumber(), scrapsPage.getNumberOfElements());
+        return ScrapsConverter.toScrapsInfoResultPageDto(
+                scrapsInfoDtoList,
+                scrapsPage.getTotalPages(),
+                (int) scrapsPage.getTotalElements(),
+                scrapsPage.isFirst(),
+                scrapsPage.isLast(),
+                scrapsPage.getNumber() + 1,
+                scrapsPage.getNumberOfElements()
+        );
     }
 
 }

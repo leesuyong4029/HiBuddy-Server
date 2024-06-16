@@ -47,19 +47,19 @@ public class S3Service {
         objectMetadata.setContentType(file.getContentType());
 
         try (InputStream inputStream = file.getInputStream()) {
-            String bucketPath = "hibuddy-bucket/" + fileName;
+            String bucketPath = "images/" + fileName;
             amazonS3Client.putObject(new PutObjectRequest(bucket, bucketPath, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
         }
 
-        return new S3Result(fileUrl + "/HiBuddy/" + fileName);
+        return new S3Result(fileUrl + "/images/" + fileName);
     }
 
     public void deleteFile(String fileName) {
         try {
-            String bucketPath = "hibuddy-bucket/" + fileName;
+            String bucketPath = "images/" + fileName;
             amazonS3Client.deleteObject(bucket, bucketPath);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

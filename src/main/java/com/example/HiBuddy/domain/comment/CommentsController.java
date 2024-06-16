@@ -51,15 +51,28 @@ public class CommentsController {
             @Parameter(name = "postId", description = "게시글의 id"),
     })
     public ApiResponse<CommentsResponseDto.CommentsInfoPageDto> getCommnetsInfoResultOnPage(
+            @AuthenticationPrincipal UserDetails user,
+            @PathVariable Long postId,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(defaultValue = "created_at.asc") String sort) {
+            @RequestParam(defaultValue = "10") int limit) {
+
         int pageNumber = page - 1;
 
         CommentsResponseDto.CommentsInfoPageDto commentsInfoPageDto =
-                commnetsService.getCommentsInfoResultsOnPage(pageNumber, limit);
+                commnetsService.getCommentsInfoResultsOnPage(postId, pageNumber, limit);
 
-        return ApiResponse.onSuccess(commentsInfoPageDto);
+        CommentsResponseDto.CommentsInfoPageDto fixedCommentsInfoPageDto = CommentsResponseDto.CommentsInfoPageDto.builder()
+                .comments(commentsInfoPageDto.getComments())
+                .totalPages(commentsInfoPageDto.getTotalPages())
+                .totalElements(commentsInfoPageDto.getTotalElements())
+                .isFirst(commentsInfoPageDto.isFirst())
+                .isLast(commentsInfoPageDto.isLast())
+                .number(commentsInfoPageDto.getNumber()) // 페이지 번호를 1부터 시작하도록 변환
+                .numberOfElements(commentsInfoPageDto.getNumberOfElements())
+                .build();
+
+
+        return ApiResponse.onSuccess(fixedCommentsInfoPageDto);
     }
 
 

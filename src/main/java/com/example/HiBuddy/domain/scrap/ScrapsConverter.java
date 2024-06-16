@@ -16,7 +16,7 @@ import static com.example.HiBuddy.domain.post.PostsConverter.toUserDto;
 @Component
 public class ScrapsConverter {
 
-    public static ScrapsResponseDto.ScrapsInfoDto toScrabsInfoResultDto(Posts post, Users user, boolean checkLike, boolean checkScrap, String createdAt) {
+    public static ScrapsResponseDto.ScrapsInfoDto toScrapsInfoResultDto(Posts post, Users user, boolean checkLike, boolean checkScrap, String createdAt, boolean isAuthor) {
         PostsResponseDto.UserDto userDto = toUserDto(post.getUser());
 
         List<PostsResponseDto.ImageDto> imageListDto = post.getPostImageList().stream()
@@ -30,21 +30,20 @@ public class ScrapsConverter {
                 .commentNum(post.getCommentsList().size())
                 .checkLike(checkLike)
                 .checkScrap(checkScrap)
-                .isAuthor(true)
+                .isAuthor(isAuthor)
                 .user(userDto)
                 .postImages(imageListDto)
                 .createdAt(createdAt)
                 .build();
     }
-    public static ScrapsResponseDto.ScrapsInfoPageDto toScrabsInfoResultPageDto(List<ScrapsResponseDto.ScrapsInfoDto> scrapsInfoDtoList, int totalPages, int totalElements,
-                                                                                boolean isFirst, boolean isLast, int size, int number, int numberOfElements){
+    public static ScrapsResponseDto.ScrapsInfoPageDto toScrapsInfoResultPageDto(List<ScrapsResponseDto.ScrapsInfoDto> scrapsInfoDtoList, int totalPages, int totalElements,
+                                                                                boolean isFirst, boolean isLast, int number, int numberOfElements){
         return ScrapsResponseDto.ScrapsInfoPageDto.builder()
                 .posts(scrapsInfoDtoList)
                 .totalPages(totalPages)
                 .totalElements(totalElements)
                 .isFirst(isFirst)
                 .isLast(isLast)
-                .size(size)
                 .number(number)
                 .numberOfElements(numberOfElements)
                 .build();

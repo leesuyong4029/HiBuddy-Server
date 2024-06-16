@@ -41,7 +41,7 @@ public class PostsConverter {
                 .build();
     }
 
-    public static PostsResponseDto.PostsInfoDto toPostInfoResultDto(Posts post, Users user, boolean checkLike, boolean checkScrap, String createdAt) {
+    public static PostsResponseDto.PostsInfoDto toPostInfoResultDto(Posts post, Users user, boolean checkLike, boolean checkScrap, String createdAt, boolean isAuthor) {
         PostsResponseDto.UserDto userDto = toUserDto(post.getUser());
 
         List<PostsResponseDto.ImageDto> imageListDto = post.getPostImageList().stream()
@@ -55,7 +55,7 @@ public class PostsConverter {
                 .commentNum(post.getCommentsList().size())
                 .checkLike(checkLike)
                 .checkScrap(checkScrap)
-                .isAuthor(true)
+                .isAuthor(isAuthor)
                 .user(userDto)
                 .postImages(imageListDto)
                 .createdAt(createdAt)
@@ -72,7 +72,7 @@ public class PostsConverter {
     }
 
     public static PostsResponseDto.PostsInfoPageDto toPostInfoResultPageDto(List<PostsResponseDto.PostsInfoDto> postsInfoDtoList, int totalPages, int totalElements,
-                                                                            boolean isFirst, boolean isLast, int size, int number, int numberOfElements) {
+                                                                            boolean isFirst, boolean isLast, int number, int numberOfElements) {
 
         return PostsResponseDto.PostsInfoPageDto.builder()
                 .posts(postsInfoDtoList)
@@ -80,7 +80,6 @@ public class PostsConverter {
                 .totalElements(totalElements)
                 .isFirst(isFirst)
                 .isLast(isLast)
-                .size(size)
                 .number(number)
                 .numberOfElements(numberOfElements)
                 .build();
