@@ -152,7 +152,6 @@ public class ChatRoomService {
                 .totalElements((int) page.getTotalElements())
                 .isFirst(page.isFirst())
                 .isLast(page.isLast())
-                .size(page.getSize())
                 .number(page.getNumber())
                 .numberOfElements(page.getNumberOfElements())
                 .build();
