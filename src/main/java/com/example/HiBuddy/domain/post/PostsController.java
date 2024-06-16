@@ -5,7 +5,9 @@ import com.example.HiBuddy.domain.post.dto.response.PostsResponseDto;
 import com.example.HiBuddy.domain.user.Users;
 import com.example.HiBuddy.global.response.ApiResponse;
 import com.example.HiBuddy.domain.user.UsersService;
+import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
 import com.example.HiBuddy.global.response.code.resultCode.SuccessStatus;
+import com.example.HiBuddy.global.response.exception.handler.GeneralHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -108,12 +110,23 @@ public class PostsController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int limit,
             @RequestParam(defaultValue = "created_at.desc") String sort) {
-        // 페이지 번호는 1부터 시작하도록 설정. Spring Data JPA의 페이지 번호는 0부터 시작하기 때문에 1을 빼줌
+        if (page < 1) {
+            throw new GeneralHandler(ErrorStatus.PAGE_NUM_STARTS_WITH_ONE);
+        }
         int pageNumber = page - 1;
 
-        PostsResponseDto.PostsInfoPageDto postsInfoPageDto = postsService.getPostsInfoResultsOnPage(pageNumber, limit);
+        PostsResponseDto.PostsInfoPageDto postsInfoPage = postsService.getPostsInfoResultsOnPage(pageNumber, limit);
 
-        return ApiResponse.onSuccess(postsInfoPageDto);
+        PostsResponseDto.PostsInfoPageDto fixedPostsInfoPage = PostsResponseDto.PostsInfoPageDto.builder()
+                .posts(postsInfoPage.getPosts())
+                .totalPages(postsInfoPage.getTotalPages())
+                .totalElements(postsInfoPage.getTotalElements())
+                .isFirst(postsInfoPage.isFirst())
+                .isLast(postsInfoPage.isLast())
+                .number(postsInfoPage.getNumber())
+                .build();
+
+        return ApiResponse.onSuccess(postsInfoPage);
     }
 
     @PostMapping("posts/{postId}/likes")
@@ -196,7 +209,17 @@ public class PostsController {
         int pageNumber = page - 1;
 
         PostsResponseDto.PostsInfoPageDto postsInfoPage = postsService.searchPostByTitle(keyword, pageNumber, limit);
-        return ApiResponse.onSuccess(postsInfoPage);
+
+        PostsResponseDto.PostsInfoPageDto fixedPostsInfoPage = PostsResponseDto.PostsInfoPageDto.builder()
+                .posts(postsInfoPage.getPosts())
+                .totalPages(postsInfoPage.getTotalPages())
+                .totalElements(postsInfoPage.getTotalElements())
+                .isFirst(postsInfoPage.isFirst())
+                .isLast(postsInfoPage.isLast())
+                .number(postsInfoPage.getNumber())
+                .build();
+
+        return ApiResponse.onSuccess(fixedPostsInfoPage);
     }
 
 }

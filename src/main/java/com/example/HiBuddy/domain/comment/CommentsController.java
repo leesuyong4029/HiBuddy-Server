@@ -59,7 +59,18 @@ public class CommentsController {
         CommentsResponseDto.CommentsInfoPageDto commentsInfoPageDto =
                 commnetsService.getCommentsInfoResultsOnPage(postId, pageNumber, limit);
 
-        return ApiResponse.onSuccess(commentsInfoPageDto);
+        CommentsResponseDto.CommentsInfoPageDto fixedCommentsInfoPageDto = CommentsResponseDto.CommentsInfoPageDto.builder()
+                .comments(commentsInfoPageDto.getComments())
+                .totalPages(commentsInfoPageDto.getTotalPages())
+                .totalElements(commentsInfoPageDto.getTotalElements())
+                .isFirst(commentsInfoPageDto.isFirst())
+                .isLast(commentsInfoPageDto.isLast())
+                .number(commentsInfoPageDto.getNumber()) // 페이지 번호를 1부터 시작하도록 변환
+                .numberOfElements(commentsInfoPageDto.getNumberOfElements())
+                .build();
+
+
+        return ApiResponse.onSuccess(fixedCommentsInfoPageDto);
     }
 
 

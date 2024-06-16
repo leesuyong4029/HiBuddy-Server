@@ -41,7 +41,7 @@ public class PostsConverter {
                 .build();
     }
 
-    public static PostsResponseDto.PostsInfoDto toPostInfoResultDto(Posts post, Users user, boolean checkLike, boolean checkScrap, String createdAt) {
+    public static PostsResponseDto.PostsInfoDto toPostInfoResultDto(Posts post, Users user, boolean checkLike, boolean checkScrap, String createdAt, boolean isAuthor) {
         PostsResponseDto.UserDto userDto = toUserDto(post.getUser());
 
         List<PostsResponseDto.ImageDto> imageListDto = post.getPostImageList().stream()
@@ -55,7 +55,7 @@ public class PostsConverter {
                 .commentNum(post.getCommentsList().size())
                 .checkLike(checkLike)
                 .checkScrap(checkScrap)
-                .isAuthor(true)
+                .isAuthor(isAuthor)
                 .user(userDto)
                 .postImages(imageListDto)
                 .createdAt(createdAt)
