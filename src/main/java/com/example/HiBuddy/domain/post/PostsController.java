@@ -107,7 +107,6 @@ public class PostsController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST401", description = "존재하지 않는 게시글입니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
     public ApiResponse<PostsResponseDto.PostsInfoPageDto> getPostsInfoResultOnPage(
-            @AuthenticationPrincipal UserDetails user,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int limit,
             @RequestParam(defaultValue = "created_at.desc") String sort) {
@@ -115,9 +114,8 @@ public class PostsController {
             throw new GeneralHandler(ErrorStatus.PAGE_NUM_STARTS_WITH_ONE);
         }
         int pageNumber = page - 1;
-        Long userId = usersService.getUserId(user);
 
-        PostsResponseDto.PostsInfoPageDto postsInfoPage = postsService.getPostsInfoResultsOnPage(userId, pageNumber, limit);
+        PostsResponseDto.PostsInfoPageDto postsInfoPage = postsService.getPostsInfoResultsOnPage(pageNumber, limit);
 
         PostsResponseDto.PostsInfoPageDto fixedPostsInfoPage = PostsResponseDto.PostsInfoPageDto.builder()
                 .posts(postsInfoPage.getPosts())

@@ -175,7 +175,7 @@ public class PostsService {
 
     // 게시글 5개씩 조회 메서드 (페이지당)
     @Transactional(readOnly = true)
-    public PostsResponseDto.PostsInfoPageDto getPostsInfoResultsOnPage(Long userId, int page, int size) {
+    public PostsResponseDto.PostsInfoPageDto getPostsInfoResultsOnPage(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Posts> postsPage = postsRepository.findAll(pageRequest);
 
@@ -197,7 +197,7 @@ public class PostsService {
                     boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
                     boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
                     String createdAt = getCreatedAt(post.getCreatedAt());
-                    boolean isAuthor = user.getId().equals(userId);
+                    boolean isAuthor = post.getUser().getId().equals(user.getId());
 
                     return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt, isAuthor);
 
