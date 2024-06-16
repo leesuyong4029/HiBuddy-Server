@@ -65,8 +65,14 @@ public enum ErrorStatus implements BaseErrorCode {
     // Searchs
     SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH401", "존재하지 않는 게시글 제목입니다."),
 
+<<<<<<< HEAD
+    // Chat
+    CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT401", "채팅방을 찾지 못했습니다."),
+    CHATROOM_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "CHAT402", "정원이 초과하였습니다.");
+=======
     // Common
     PAGE_NUM_STARTS_WITH_ONE(HttpStatus.BAD_REQUEST, "COMMON401", "페이지 번호는 1 이상이어야 합니다.");
+>>>>>>> d26e2c5b2b7623b29aeff4d3cb30e4e03d1006d2
 
     private final HttpStatus httpStatus;
     private final String code;

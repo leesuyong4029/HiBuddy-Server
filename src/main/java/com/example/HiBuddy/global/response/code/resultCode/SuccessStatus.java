@@ -48,7 +48,13 @@ public enum SuccessStatus implements BaseCode {
     COMMENT_CANCEL_LIKE_SUCCESS(HttpStatus.OK, "COMMENT205", "댓글 좋아요 해제하기 성공"),
 
     // Searchs
-    SEARCH_POST_TITLE_SUCCESS(HttpStatus.OK, "SEARCH201", "게시물 제목으로 검색 성공");
+    SEARCH_POST_TITLE_SUCCESS(HttpStatus.OK, "SEARCH201", "게시물 제목으로 검색 성공"),
+
+    // chat
+    CHATROOM_ADD_USER_SUCCESS(HttpStatus.OK, "CHATROOM202", "채팅방 유저 join 성공"),
+    CHATROOM_ENTER_SUCCESS(HttpStatus.OK, "CHATROOM203", "채팅방 입장 성공"),
+    CHATROOM_LEAVE_SUCCESS(HttpStatus.OK, "CHATROOM204", "채팅방 퇴장 성공"),
+    CHATROOM_DELETE_SUCCESS(HttpStatus.OK, "CHATROOM205", "매칭글 삭제 성공");
 
     private final HttpStatus httpStatus;
     private final String code;
