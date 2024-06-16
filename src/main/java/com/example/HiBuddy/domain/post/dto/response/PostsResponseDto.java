@@ -34,6 +34,7 @@ public class PostsResponseDto {
         private Images profileUrl;
     }
 
+
     @Builder
     @Getter
     @AllArgsConstructor

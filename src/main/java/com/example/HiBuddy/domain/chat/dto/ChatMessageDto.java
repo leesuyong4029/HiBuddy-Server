@@ -1,5 +1,6 @@
 package com.example.HiBuddy.domain.chat.dto;
 
+import com.example.HiBuddy.domain.chat.domain.MessageType;
 import lombok.*;
 
 @Builder
@@ -7,12 +8,10 @@ import lombok.*;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ChatMessage {
+public class ChatMessageDto {
     private MessageType type;
-    private String roomId;
-    private String sender;
     private String message;
-    public enum MessageType {
-        ENTER, TALK
-    }
+    private String sender;
+    private String roomId;
 }
+

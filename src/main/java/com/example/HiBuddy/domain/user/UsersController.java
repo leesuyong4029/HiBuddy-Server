@@ -30,7 +30,7 @@ import java.util.Collections;
 public class UsersController {
     private final UsersService usersService;
 
-    @GetMapping("/myPage")
+    @GetMapping
     @Operation(summary = "유저 정보 조회 API", description = "유저 정보를 조회합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "성공"),
@@ -93,20 +93,19 @@ public class UsersController {
         }
     }
 
-    @PostMapping(path = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(path = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "S3 프로필 이미지 업로드 API", description = "프로필 이미지를 S3에 업로드하고 사용자 엔티티에 설정합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "IMAGE401", description = "파일이 존재하지 않습니다.", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
     })
-    public ApiResponse<ImagesResponseDto> uploadProfileImage(@AuthenticationPrincipal UserDetails user, @RequestParam("file") MultipartFile file) {
+    public ApiResponse<SuccessStatus> uploadProfileImage(@AuthenticationPrincipal UserDetails user, @RequestParam("file") MultipartFile file) {
         if(file.isEmpty()){
             return ApiResponse.onFailure(ErrorStatus.IMAGE_NOT_FOUND.getCode(),ErrorStatus.IMAGE_NOT_FOUND.getMessage(), null);
         }
         Long userId = usersService.getUserId(user);
-        Images profileImage = usersService.uploadProfileImage(file, userId);
-        ImagesResponseDto imagesResponseDto = new ImagesResponseDto(Collections.singletonList(profileImage.getId()));
-        return ApiResponse.onSuccess(imagesResponseDto);
+        usersService.uploadProfileImage(file, userId);
+        return ApiResponse.onSuccess(SuccessStatus.USER_PROFILE_IAMGE_CHANGE_SUCCESS);
     }
 
     @GetMapping("/posts")

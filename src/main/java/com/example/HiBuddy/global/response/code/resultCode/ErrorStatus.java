@@ -63,7 +63,11 @@ public enum ErrorStatus implements BaseErrorCode {
     IMAGE_NOT_PROVIDED(HttpStatus.NOT_FOUND, "IMAGE403", "프로필 이미지가 존재하지 않습니다."),
 
     // Searchs
-    SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH401", "존재하지 않는 게시글 제목입니다.");
+    SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "SEARCH401", "존재하지 않는 게시글 제목입니다."),
+
+    // Chat
+    CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT401", "채팅방을 찾지 못했습니다."),
+    CHATROOM_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "CHAT402", "정원이 초과하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
