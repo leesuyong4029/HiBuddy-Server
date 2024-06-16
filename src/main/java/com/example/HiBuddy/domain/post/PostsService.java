@@ -79,7 +79,8 @@ public class PostsService {
 
         newPost.getPostImageList().addAll(images); // 양방향 연관관계 설정
 
-        return PostsConverter.toPostInfoResultDto(newPost, user, false, false, getCreatedAt(newPost.getCreatedAt()));
+        return PostsConverter.toPostInfoResultDto(newPost, user, false, false, getCreatedAt(newPost.getCreatedAt()), true
+        );
     }
 
     // 특정 게시글 조회 메서드
@@ -87,6 +88,7 @@ public class PostsService {
     public PostsResponseDto.PostsInfoDto getPostInfoResult(Long userId, Long postId) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new PostsHandler(ErrorStatus.POST_NOT_FOUND));
 
@@ -94,8 +96,9 @@ public class PostsService {
         boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
 
         String createdAt = getCreatedAt(post.getCreatedAt());
+        boolean isAuthor = post.getUser().getId().equals(userId);
 
-        return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt);
+        return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt, isAuthor);
     }
 
     // 게시글 수정 메서드
@@ -103,6 +106,7 @@ public class PostsService {
     public void updatePost(Long userId, Long postId, PostsRequestDto.UpdatePostRequestDto request) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new PostsHandler(ErrorStatus.POST_NOT_FOUND));
 
@@ -147,8 +151,10 @@ public class PostsService {
     public void deletePost(Long userId, Long postId) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
+
         Posts post = postsRepository.findByUserIdAndId(userId, postId)
                 .orElseThrow(() -> new PostsHandler(ErrorStatus.POST_NOT_FOUND));
+
         if (!user.getId().equals(post.getUser().getId())) {
             throw new UsersHandler(ErrorStatus.POST_NOT_AUTHORIZED);
         }
@@ -173,20 +179,39 @@ public class PostsService {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Posts> postsPage = postsRepository.findAll(pageRequest);
 
+        if (postsPage.isEmpty()) {
+            return PostsConverter.toPostInfoResultPageDto(
+                    List.of(),
+                    postsPage.getTotalPages(),
+                    (int) postsPage.getTotalElements(),
+                    postsPage.isFirst(),
+                    postsPage.isLast(),
+                    postsPage.getNumber() + 1,
+                    postsPage.getNumberOfElements()
+            );
+        }
+
         List<PostsResponseDto.PostsInfoDto> postsInfoDtoList = postsPage.getContent().stream()
                 .map(post -> {
                     Users user = post.getUser();
                     boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
                     boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
                     String createdAt = getCreatedAt(post.getCreatedAt());
+                    boolean isAuthor = post.getUser().getId().equals(user.getId());
 
-                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt);
+                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt, isAuthor);
 
                 })
                 .collect(Collectors.toList());
 
-        return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList, postsPage.getTotalPages(), (int) postsPage.getTotalElements(),
-                postsPage.isFirst(), postsPage.isLast(), postsPage.getNumber(), postsPage.getNumberOfElements());
+        return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList,
+                postsPage.getTotalPages(),
+                (int) postsPage.getTotalElements(),
+                postsPage.isFirst(),
+                postsPage.isLast(),
+                postsPage.getNumber() + 1,
+                postsPage.getNumberOfElements()
+        );
     }
 
     // 좋아요 생성 메서드
@@ -276,7 +301,15 @@ public class PostsService {
         Page<Posts> postsPage = postsRepository.findByTitle(keyword, pageable);
 
         if (postsPage.isEmpty()) {
-            throw new PostsHandler(ErrorStatus.POST_TITLE_NOT_FOUND);
+            return PostsConverter.toPostInfoResultPageDto(
+                    List.of(),
+                    postsPage.getTotalPages(),
+                    (int) postsPage.getTotalElements(),
+                    postsPage.isFirst(),
+                    postsPage.isLast(),
+                    postsPage.getNumber() + 1,
+                    postsPage.getNumberOfElements()
+            );
         }
 
         List<PostsResponseDto.PostsInfoDto> postsInfoDtoList = postsPage.getContent().stream()
@@ -285,11 +318,19 @@ public class PostsService {
                     boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
                     boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
                     String createdAt = getCreatedAt(post.getCreatedAt());
+                    boolean isAuthor = post.getUser().getId().equals(user.getId());
 
-                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt);
+                    return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt, isAuthor);
                 })
                 .collect(Collectors.toList());
-        return PostsConverter.toPostInfoResultPageDto(postsInfoDtoList, postsPage.getTotalPages(), (int) postsPage.getTotalElements(),
-                postsPage.isFirst(), postsPage.isLast(), postsPage.getNumber(), postsPage.getNumberOfElements());
+        return PostsConverter.toPostInfoResultPageDto(
+                postsInfoDtoList,
+                postsPage.getTotalPages(),
+                (int) postsPage.getTotalElements(),
+                postsPage.isFirst(),
+                postsPage.isLast(),
+                postsPage.getNumber() + 1,
+                postsPage.getNumberOfElements()
+        );
     }
 }

@@ -9,6 +9,7 @@ import com.example.HiBuddy.domain.user.dto.response.UsersResponseDto;
 import com.example.HiBuddy.global.response.ApiResponse;
 import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
 import com.example.HiBuddy.global.response.code.resultCode.SuccessStatus;
+import com.example.HiBuddy.global.response.exception.handler.GeneralHandler;
 import com.example.HiBuddy.global.response.exception.handler.PostsHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -118,10 +119,27 @@ public class UsersController {
     public ApiResponse<PostsResponseDto.PostsInfoPageDto> getMyPosts(@AuthenticationPrincipal UserDetails user,
                                                                @RequestParam(defaultValue = "1") int page,
                                                                @RequestParam(defaultValue = "5") int limit) {
+        if (page < 1) {
+            throw new GeneralHandler(ErrorStatus.PAGE_NUM_STARTS_WITH_ONE);
+        }
+        int pageNumber = page - 1;
+
         Long userId = usersService.getUserId(user);
         try {
-            PostsResponseDto.PostsInfoPageDto pagedPosts = usersService.getPostsByUserId(userId, page - 1, limit);
-            return ApiResponse.onSuccess(pagedPosts);
+            PostsResponseDto.PostsInfoPageDto pagedPosts = usersService.getPostsByUserId(userId, pageNumber, limit);
+
+            // 페이지 번호를 다시 1부터 시작하도록 변환
+            PostsResponseDto.PostsInfoPageDto fixedPagedPosts = PostsResponseDto.PostsInfoPageDto.builder()
+                    .posts(pagedPosts.getPosts())
+                    .totalPages(pagedPosts.getTotalPages())
+                    .totalElements(pagedPosts.getTotalElements())
+                    .isFirst(pagedPosts.isFirst())
+                    .isLast(pagedPosts.isLast())
+                    .number(pagedPosts.getNumber()) // 페이지 번호를 1부터 시작하도록 변환
+                    .numberOfElements(pagedPosts.getNumberOfElements())
+                    .build();
+
+            return ApiResponse.onSuccess(fixedPagedPosts);
         } catch (PostsHandler e) {
             return ApiResponse.onFailure(e.getErrorReason().getCode(), e.getErrorReason().getMessage(), null);
         }
@@ -136,10 +154,26 @@ public class UsersController {
     public ApiResponse<ScrapsResponseDto.ScrapsInfoPageDto> getMyScrabs(@AuthenticationPrincipal UserDetails user,
                                                                         @RequestParam(defaultValue = "1") int page,
                                                                         @RequestParam(defaultValue = "5") int limit) {
+        if (page < 1) {
+            throw new GeneralHandler(ErrorStatus.PAGE_NUM_STARTS_WITH_ONE);
+        }
+        int pageNumber = page - 1;
+
         Long userId = usersService.getUserId(user);
         try {
-            ScrapsResponseDto.ScrapsInfoPageDto pageScraps = usersService.getScrapsByUserId(userId, page - 1, limit);
-            return ApiResponse.onSuccess(pageScraps);
+            ScrapsResponseDto.ScrapsInfoPageDto pageScraps = usersService.getScrapsByUserId(userId, pageNumber, limit);
+
+            ScrapsResponseDto.ScrapsInfoPageDto fixedScrapsPagedPosts = ScrapsResponseDto.ScrapsInfoPageDto.builder()
+                    .posts(pageScraps.getPosts())
+                    .totalPages(pageScraps.getTotalPages())
+                    .totalElements(pageScraps.getTotalElements())
+                    .isFirst(pageScraps.isFirst())
+                    .isLast(pageScraps.isLast())
+                    .number(pageScraps.getNumber()) // 페이지 번호를 1부터 시작하도록 변환
+                    .numberOfElements(pageScraps.getNumberOfElements())
+                    .build();
+
+            return ApiResponse.onSuccess(fixedScrapsPagedPosts);
         } catch (PostsHandler e) {
             return ApiResponse.onFailure(e.getErrorReason().getCode(), e.getErrorReason().getMessage(), null);
         }

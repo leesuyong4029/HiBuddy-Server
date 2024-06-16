@@ -27,13 +27,13 @@ public class CommentsConverter {
                 .build();
     }
 
-    public static CommentsResponseDto.CommentDto toCommentInfoResultDto(Comments comment, Posts post, Users user, String createdAt) {
+    public static CommentsResponseDto.CommentDto toCommentInfoResultDto(Comments comment, Posts post, Users user, String createdAt, boolean isAuthor) {
         CommentsResponseDto.UserDto userDto = toUserDto(post.getUser());
 
         return CommentsResponseDto.CommentDto.builder()
                 .commentId(comment.getId())
                 .comment(comment.getComment())
-                .isAuthor(true)
+                .isAuthor(isAuthor)
                 .user(userDto)
                 .createdAt(createdAt)
                 .build();

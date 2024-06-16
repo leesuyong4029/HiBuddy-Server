@@ -20,12 +20,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @Configurable
@@ -57,6 +54,8 @@ public class SecurityConfig { // Servlet Container의 SecurityConfig 생성
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://hi-buddy.vercel.app", "https://www.hibuddyinha.shop"));
+
+                        configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PATCH", "PUT", "DELETE", "OPTIONS"));
 
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
