@@ -2,6 +2,7 @@ package com.example.HiBuddy.domain.comment;
 
 import com.example.HiBuddy.domain.comment.dto.request.CommentsRequestDto;
 import com.example.HiBuddy.domain.comment.dto.response.CommentsResponseDto;
+import com.example.HiBuddy.domain.user.Users;
 import com.example.HiBuddy.domain.user.UsersService;
 import com.example.HiBuddy.global.response.ApiResponse;
 import com.example.HiBuddy.global.response.code.resultCode.SuccessStatus;
@@ -55,6 +56,7 @@ public class CommentsController {
             @PathVariable Long postId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int limit) {
+
         int pageNumber = page - 1;
         Long userId = usersService.getUserId(user);
 
