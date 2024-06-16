@@ -81,7 +81,7 @@ public class CommentsService {
                     Users user = comment.getUser();
                     Posts post = comment.getPost();
                     String createdAt = getCreatedAt(comment.getCreatedAt());
-                    boolean isAuthor = comment.getUser().getId().equals(user.getId());
+                    boolean isAuthor = user.getId().equals(comment.getUser().getId());
 
                     return CommentsConverter.toCommentInfoResultDto(comment, comment.getPost(), user, createdAt, isAuthor);
                 })

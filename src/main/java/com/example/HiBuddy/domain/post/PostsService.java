@@ -197,7 +197,7 @@ public class PostsService {
                     boolean checkLike = postLikesRepository.existsByUserAndPost(user, post);
                     boolean checkScrap = scrapsRepository.existsByUserAndPost(user, post);
                     String createdAt = getCreatedAt(post.getCreatedAt());
-                    boolean isAuthor = post.getUser().getId().equals(user.getId());
+                    boolean isAuthor = user.getId().equals(post.getUser().getId());
 
                     return PostsConverter.toPostInfoResultDto(post, user, checkLike, checkScrap, createdAt, isAuthor);
 
