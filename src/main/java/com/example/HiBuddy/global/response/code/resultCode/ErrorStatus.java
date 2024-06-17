@@ -70,8 +70,10 @@ public enum ErrorStatus implements BaseErrorCode {
     CHATROOM_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "CHAT402", "정원이 초과하였습니다."),
 
     // Common
-    PAGE_NUM_STARTS_WITH_ONE(HttpStatus.BAD_REQUEST, "COMMON401", "페이지 번호는 1 이상이어야 합니다.");
+    PAGE_NUM_STARTS_WITH_ONE(HttpStatus.BAD_REQUEST, "COMMON401", "페이지 번호는 1 이상이어야 합니다."),
 
+    // Script
+    SCRIPT_NOT_FOUND(HttpStatus.NOT_FOUND, "SCRIPT401", "존재하지 않는 스크립트입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
