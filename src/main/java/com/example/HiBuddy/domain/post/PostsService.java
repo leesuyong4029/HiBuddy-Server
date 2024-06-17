@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +48,11 @@ public class PostsService {
     public static String getCreatedAt(LocalDateTime createdAt) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
-        return createdAt.format(formatter);
+
+        // LocalDateTime을 ZoneDateTime으로 변환하고, GMT+9 타임존을 설정
+        ZonedDateTime zonedDateTime = createdAt.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+
+        return zonedDateTime.format(formatter);
     }
 
     // 게시글 생성 메서드
