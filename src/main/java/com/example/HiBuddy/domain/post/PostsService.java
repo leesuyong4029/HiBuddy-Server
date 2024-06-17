@@ -85,8 +85,7 @@ public class PostsService {
 
         newPost.getPostImageList().addAll(images); // 양방향 연관관계 설정
 
-        return PostsConverter.toPostInfoResultDto(newPost, user, false, false, getCreatedAt(newPost.getCreatedAt()), true
-        );
+        return PostsConverter.toPostInfoResultDto(newPost, user, false, false, getCreatedAt(newPost.getCreatedAt()), true);
     }
 
     // 특정 게시글 조회 메서드

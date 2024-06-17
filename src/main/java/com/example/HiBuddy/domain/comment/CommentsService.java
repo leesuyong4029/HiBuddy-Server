@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,7 +37,11 @@ public class CommentsService {
     public static String getCreatedAt(LocalDateTime createdAt) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
-        return createdAt.format(formatter);
+
+        // LocalDateTime을 ZoneDateTime으로 변환하고, GMT+9 타임존을 설정
+        ZonedDateTime zonedDateTime = createdAt.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+
+        return zonedDateTime.format(formatter);
     }
 
     // 댓글 생성 API
@@ -53,9 +59,7 @@ public class CommentsService {
         Comments newComment = CommentsConverter.toCommentEntity(user, post, request);
         commentsRepository.save(newComment);
 
-        boolean isAuthor = newComment.getUser().getId().equals(userId);
-
-        return CommentsConverter.toCommentInfoResultDto(newComment, post, user, getCreatedAt(newComment.getCreatedAt()), isAuthor);
+        return CommentsConverter.toCommentInfoResultDto(newComment, post, user, getCreatedAt(newComment.getCreatedAt()), true);
     }
 
     // 댓글 조회 API
