@@ -53,4 +53,13 @@ public class ImagesService {
         imagesRepository.delete(image);
 
     }
+
+
+    public void deleteImagesByUrl(String imageUrl) {
+        Images image = imagesRepository.findByUrl(imageUrl);
+        if (image != null) {
+            s3Service.deleteFile(image.getUrl());
+            imagesRepository.delete(image);
+        }
+    }
 }

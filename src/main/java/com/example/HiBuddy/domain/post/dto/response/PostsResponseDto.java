@@ -29,7 +29,7 @@ public class PostsResponseDto {
     public static class UserDto {
         private Long userId;
         private String nickname;
-        private Images profileUrl;
+        private String profileUrl;
     }
 
 
