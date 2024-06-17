@@ -119,7 +119,6 @@ public class UsersService {
         newImage.setUrl(s3Result.getFileUrl());
         newImage.setType(file.getContentType());
         newImage.setUser(user);
-        System.out.println(s3Result.getFileUrl());
 
         Images savedImage = imagesRepository.save(newImage);
 
