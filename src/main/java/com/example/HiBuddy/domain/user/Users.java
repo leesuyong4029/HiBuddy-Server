@@ -2,6 +2,7 @@ package com.example.HiBuddy.domain.user;
 
 import com.example.HiBuddy.domain.image.Images;
 import com.example.HiBuddy.domain.post.Posts;
+import com.example.HiBuddy.domain.test.Test;
 import com.example.HiBuddy.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -51,6 +52,9 @@ public class Users extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Posts> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Test> testHistories;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
