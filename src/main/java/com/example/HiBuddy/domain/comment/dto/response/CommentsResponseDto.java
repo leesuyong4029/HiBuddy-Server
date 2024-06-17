@@ -17,7 +17,7 @@ public class CommentsResponseDto {
     public static class UserDto {
         private Long userId;
         private String nickname;
-        private Images profileUrl;
+        private String profileUrl;
     }
 
     @Builder

@@ -7,15 +7,13 @@ import lombok.*;
 
 public class UsersResponseDto {
 
+    @Data
     @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class UsersMyPageDto {
         private String nickname;
         private Country country;
         private Major major;
-        private Images profileImage;
+        private String profileImage;
     }
 
     @Builder

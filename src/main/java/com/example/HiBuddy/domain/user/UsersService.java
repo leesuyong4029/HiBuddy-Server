@@ -19,7 +19,6 @@ import com.example.HiBuddy.global.response.exception.handler.UsersHandler;
 import com.example.HiBuddy.global.s3.S3Service;
 import com.example.HiBuddy.global.s3.dto.S3Result;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,15 +46,17 @@ public class UsersService {
     private final PostLikesRepository postLikesRepository;
     private final ScrapsRepository scrapsRepository;
 
+    @Transactional(readOnly = true)
     public Optional<UsersResponseDto.UsersMyPageDto> getUserDTOById(Long id) {
         return usersRepository.findById(id).map(user -> {
-            Hibernate.initialize(user.getProfileImage()); // Lazy-loaded 관계 초기화
-            return new UsersResponseDto.UsersMyPageDto(
-                    user.getNickname(),
-                    user.getCountry(),
-                    user.getMajor(),
-                    user.getProfileImage() != null ? user.getProfileImage() : null
-            );
+            String profileImageUrl = user.getProfileImage();
+
+            return UsersResponseDto.UsersMyPageDto.builder()
+                    .nickname(user.getNickname())
+                    .country(user.getCountry())
+                    .major(user.getMajor())
+                    .profileImage(profileImageUrl)
+                    .build();
         });
     }
 
@@ -105,9 +106,9 @@ public class UsersService {
     public Images uploadProfileImage(MultipartFile file, Long userId) {
         Users user = usersRepository.findById(userId).orElseThrow(() -> new UsersHandler(ErrorStatus.USER_NOT_FOUND));
 
-        // 기존 프로필 이미지 삭제
+        // 기존 프로필 이미지 삭제 (필요한 경우)
         if (user.getProfileImage() != null) {
-            imagesService.deleteImages(user.getProfileImage().getId());
+            imagesService.deleteImagesByUrl(user.getProfileImage());
         }
 
         // 새로운 프로필 이미지 업로드
@@ -118,11 +119,12 @@ public class UsersService {
         newImage.setUrl(s3Result.getFileUrl());
         newImage.setType(file.getContentType());
         newImage.setUser(user);
+        System.out.println(s3Result.getFileUrl());
 
         Images savedImage = imagesRepository.save(newImage);
 
         // 사용자 엔티티에 프로필 이미지 설정
-        user.setProfileImage(savedImage);
+        user.setProfileImage(s3Result.getFileUrl());
         usersRepository.save(user);
 
         return savedImage;

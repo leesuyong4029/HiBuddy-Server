@@ -24,7 +24,7 @@ public enum SuccessStatus implements BaseCode {
     USER_TOKEN_REISSUE_SUCCESS(HttpStatus.OK, "USER203", "사용자 토큰 재발급 성공"),
     USER_INFO_GET_SUCCESS(HttpStatus.OK, "USER204", "내 정보(마이페이지) 가져오기 성공"),
     USER_NICKNAME_CHANGE_SUCCESS(HttpStatus.OK, "USER205", "닉네임 수정하기 성공"),
-    USER_PROFILE_IAMGE_CHANGE_SUCCESS(HttpStatus.OK, "USER206", "프로필 이미지 수정하기 성공"),
+    USER_PROFILE_IMAGE_CHANGE_SUCCESS(HttpStatus.OK, "USER206", "프로필 이미지 수정하기 성공"),
     GET_MY_UPLOAD_COMMENT_SUCCESS(HttpStatus.OK,"USER207", "내가 업로드한 게시글 가져오기 성공"),
     GET_MY_SCRAB_COMMENT_SUCCESS(HttpStatus.OK,"USER208", "내가 스크랩한 게시글 가져오기 성공"),
     USER_DELETE_SUCCESS(HttpStatus.OK, "USER209", "유저 삭제 성공"),

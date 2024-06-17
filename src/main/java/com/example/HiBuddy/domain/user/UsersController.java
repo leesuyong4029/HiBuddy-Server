@@ -106,7 +106,7 @@ public class UsersController {
         }
         Long userId = usersService.getUserId(user);
         usersService.uploadProfileImage(file, userId);
-        return ApiResponse.onSuccess(SuccessStatus.USER_PROFILE_IAMGE_CHANGE_SUCCESS);
+        return ApiResponse.onSuccess(SuccessStatus.USER_PROFILE_IMAGE_CHANGE_SUCCESS);
     }
 
     @GetMapping("/posts")
