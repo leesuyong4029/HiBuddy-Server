@@ -51,6 +51,7 @@ public class CommentsController {
             @Parameter(name = "postId", description = "게시글의 id"),
     })
     public ApiResponse<CommentsResponseDto.CommentsInfoPageDto> getCommnetsInfoResultOnPage(
+            @AuthenticationPrincipal UserDetails user,
             @PathVariable Long postId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int limit) {
