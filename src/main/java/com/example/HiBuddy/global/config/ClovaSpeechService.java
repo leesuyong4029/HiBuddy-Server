@@ -1,11 +1,9 @@
 package com.example.HiBuddy.global.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -16,7 +14,7 @@ public class ClovaSpeechService {
     @Value("${clova.client-id}")
     private String clientId;
 
-    @Value("{clova.client-secret}")
+    @Value("${clova.client-secret}")
     private String clientSecret;
 
     @Value("${clova.url}")
@@ -32,20 +30,26 @@ public class ClovaSpeechService {
 
         HttpEntity<byte[]> requestEntity = new HttpEntity<>(audioData, headers);
 
-        ResponseEntity<Map> responseEntity = restTemplate.exchange(
-                clovaUrl,
-                HttpMethod.POST,
-                requestEntity,
-                Map.class
-        );
+        try {
+            ResponseEntity<Map> responseEntity = restTemplate.exchange(
+                    clovaUrl + "?lang=Kor", // 언어 파라미터 추가
+                    HttpMethod.POST,
+                    requestEntity,
+                    Map.class
+            );
 
-        Map<String, Object> responseBody = responseEntity.getBody();
-        if (responseBody != null && responseBody.containsKey("text")) {
-            return responseBody.get("text").toString();
-        } else {
-            throw new RuntimeException("Clova API 호출 실패");
+            Map<String, Object> responseBody = responseEntity.getBody();
+            if (responseBody != null && responseBody.containsKey("text")) {
+                return responseBody.get("text").toString();
+            } else {
+                throw new RuntimeException("Clova API 호출 실패");
+            }
+        } catch (HttpClientErrorException e) {
+            // 400 Bad Request 예외 처리
+            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                throw new RuntimeException("Clova API 잘못된 요청: " + e.getResponseBodyAsString());
+            }
+            throw e;
         }
     }
-
-
 }

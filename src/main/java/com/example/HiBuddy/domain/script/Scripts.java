@@ -15,9 +15,7 @@ public class Scripts extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String scriptName;
     private Difficulty difficulty;
     private String text;
-
 }

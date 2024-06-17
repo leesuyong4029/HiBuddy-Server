@@ -54,7 +54,12 @@ public enum SuccessStatus implements BaseCode {
     CHATROOM_ADD_USER_SUCCESS(HttpStatus.OK, "CHATROOM202", "채팅방 유저 join 성공"),
     CHATROOM_ENTER_SUCCESS(HttpStatus.OK, "CHATROOM203", "채팅방 입장 성공"),
     CHATROOM_LEAVE_SUCCESS(HttpStatus.OK, "CHATROOM204", "채팅방 퇴장 성공"),
-    CHATROOM_DELETE_SUCCESS(HttpStatus.OK, "CHATROOM205", "매칭글 삭제 성공");
+    CHATROOM_DELETE_SUCCESS(HttpStatus.OK, "CHATROOM205", "매칭글 삭제 성공"),
+    
+    
+    // Script
+    SCRIPT_ADD_SUCCESS(HttpStatus.OK, "SCRIPT201", "스크립트 등록 성공"),
+    SCRIPT_FIND_SUCCESS(HttpStatus.OK, "SCRIPT202", "스크립트 찾기 성공");
 
     private final HttpStatus httpStatus;
     private final String code;
