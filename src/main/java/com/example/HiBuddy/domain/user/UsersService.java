@@ -12,6 +12,7 @@ import com.example.HiBuddy.domain.scrap.Scraps;
 import com.example.HiBuddy.domain.scrap.ScrapsConverter;
 import com.example.HiBuddy.domain.scrap.ScrapsRepository;
 import com.example.HiBuddy.domain.scrap.response.ScrapsResponseDto;
+import com.example.HiBuddy.domain.test.TestsRepository;
 import com.example.HiBuddy.domain.user.dto.request.UsersRequestDto;
 import com.example.HiBuddy.domain.user.dto.response.UsersResponseDto;
 import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
@@ -45,6 +46,7 @@ public class UsersService {
     private final PostsRepository postsRepository;
     private final PostLikesRepository postLikesRepository;
     private final ScrapsRepository scrapsRepository;
+    private final TestsRepository testsRepository;
 
     @Transactional(readOnly = true)
     public Optional<UsersResponseDto.UsersMyPageDto> getUserDTOById(Long id) {
@@ -73,6 +75,13 @@ public class UsersService {
     public void deleteUser(Long userId) {
         Users user = usersRepository.findUsersById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User with userId " + userId + " not found"));
+        // 연관된 엔티티 삭제
+        imagesRepository.deleteAllByUser(user);
+        postsRepository.deleteAllByUser(user);
+        testsRepository.deleteAllByUser(user);
+
+        // 사용자 삭제
+        usersRepository.delete(user);
         usersRepository.delete(user);
     }
 
