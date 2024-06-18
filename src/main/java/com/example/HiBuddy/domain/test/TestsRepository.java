@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface TestsRepository extends JpaRepository<Test, Long> {
     Page<Test> findByUser(Users user, Pageable pageable);
     Optional<Test> findByIdAndUser(Long id, Users user);
+    void deleteAllByUser(Users user);
 }

@@ -1,4 +1,5 @@
 package com.example.HiBuddy.domain.post;
+import com.example.HiBuddy.domain.user.Users;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface PostsRepository extends JpaRepository<Posts, Long> {
+    void deleteAllByUser(Users user);
 
     Page<Posts> findByUserId(Long userId, Pageable pageable);
 
