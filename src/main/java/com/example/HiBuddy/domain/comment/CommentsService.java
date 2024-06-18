@@ -64,7 +64,7 @@ public class CommentsService {
 
     // 댓글 조회 API
     @Transactional(readOnly = true)
-    public CommentsResponseDto.CommentsInfoPageDto getCommentsInfoResultsOnPage(Long postId, int page, int size) {
+    public CommentsResponseDto.CommentsInfoPageDto getCommentsInfoResultsOnPage(Long postId, Long userId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
         Page<Comments> commentsPage = commentsRepository.findByPostId(postId, pageRequest);
 
@@ -85,7 +85,7 @@ public class CommentsService {
                     Users user = comment.getUser();
                     Posts post = comment.getPost();
                     String createdAt = getCreatedAt(comment.getCreatedAt());
-                    boolean isAuthor = user.getId().equals(comment.getUser().getId());
+                    boolean isAuthor = user.getId().equals(userId);
 
                     return CommentsConverter.toCommentInfoResultDto(comment, comment.getPost(), user, createdAt, false);
                 })

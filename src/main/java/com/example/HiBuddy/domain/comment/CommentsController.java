@@ -52,13 +52,14 @@ public class CommentsController {
     })
     public ApiResponse<CommentsResponseDto.CommentsInfoPageDto> getCommnetsInfoResultOnPage(
             @PathVariable Long postId,
+            @AuthenticationPrincipal UserDetails user,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int limit) {
 
         int pageNumber = page - 1;
 
         CommentsResponseDto.CommentsInfoPageDto commentsInfoPageDto =
-                commnetsService.getCommentsInfoResultsOnPage(postId, pageNumber, limit);
+                commnetsService.getCommentsInfoResultsOnPage(postId, usersService.getUserId(user), pageNumber, limit);
 
         CommentsResponseDto.CommentsInfoPageDto fixedCommentsInfoPageDto = CommentsResponseDto.CommentsInfoPageDto.builder()
                 .comments(commentsInfoPageDto.getComments())
