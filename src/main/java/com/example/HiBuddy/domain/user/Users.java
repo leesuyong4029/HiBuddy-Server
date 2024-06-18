@@ -4,6 +4,7 @@ import com.example.HiBuddy.domain.image.Images;
 import com.example.HiBuddy.domain.post.Posts;
 import com.example.HiBuddy.domain.test.Test;
 import com.example.HiBuddy.global.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "users")
 public class Users extends BaseEntity implements UserDetails {
     @Id
@@ -53,7 +55,7 @@ public class Users extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Posts> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Test> testHistories;
 
     @Override

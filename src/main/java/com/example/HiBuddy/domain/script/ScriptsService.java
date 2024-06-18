@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,5 +31,15 @@ public class ScriptsService {
                         .text(script.getText())
                         .build())
                 .collect(Collectors.toList());
+    }
+    // 새로운 메서드 추가
+    public Optional<ScriptsResponseDto.ScriptDto> findScriptById(Long scriptId) {
+        return scriptsRepository.findById(scriptId)
+                .map(script -> new ScriptsResponseDto.ScriptDto(
+                        script.getId(),
+                        script.getScriptName(),
+                        script.getDifficulty().name(),
+                        script.getText()
+                ));
     }
 }

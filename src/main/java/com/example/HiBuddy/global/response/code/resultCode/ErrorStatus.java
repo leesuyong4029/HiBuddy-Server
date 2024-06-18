@@ -73,7 +73,10 @@ public enum ErrorStatus implements BaseErrorCode {
     PAGE_NUM_STARTS_WITH_ONE(HttpStatus.BAD_REQUEST, "COMMON401", "페이지 번호는 1 이상이어야 합니다."),
 
     // Script
-    SCRIPT_NOT_FOUND(HttpStatus.NOT_FOUND, "SCRIPT401", "존재하지 않는 스크립트입니다.");
+    SCRIPT_NOT_FOUND(HttpStatus.NOT_FOUND, "SCRIPT401", "존재하지 않는 스크립트입니다."),
+
+    // Test
+    TEST_NOT_FOUND(HttpStatus.NOT_FOUND, "TEST401", "존재하지 않는 테스트입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

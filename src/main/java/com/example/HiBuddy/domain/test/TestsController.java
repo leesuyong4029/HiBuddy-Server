@@ -1,7 +1,12 @@
 package com.example.HiBuddy.domain.test;
 
+import com.example.HiBuddy.domain.test.dto.response.TestsResponseDto;
+import com.example.HiBuddy.domain.user.UsersService;
 import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,27 +16,67 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.attribute.UserPrincipal;
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/tests")
 @RequiredArgsConstructor
 public class TestsController {
 
     private final TestsService testsService;
+    private final UsersService usersService;
 
     @PostMapping("/perform")
     public ResponseEntity<ApiResponse<?>> performTest(
+            @AuthenticationPrincipal UserDetails user,
             @RequestParam Long scriptId,
-            @RequestParam MultipartFile audioFile,
-            @RequestParam String testDateStr) {
+            @RequestParam MultipartFile audioFile) {
         try {
-            Test result = testsService.performTest(scriptId, audioFile, testDateStr);
-            return ResponseEntity.ok(ApiResponse.onSuccess(result));
+            Long userId = usersService.getUserId(user);
+            TestsResponseDto.TestResultDto resultDto = testsService.performTest(userId, scriptId, audioFile);
+            return ResponseEntity.ok(ApiResponse.onSuccess(resultDto));
         } catch (Exception e) {
             e.printStackTrace(); // 로그에 예외 정보 출력
             return ResponseEntity.status(ErrorStatus.INTERNAL_SERVER_ERROR.getHttpStatus())
                     .body(ApiResponse.onFailure(
                             ErrorStatus.INTERNAL_SERVER_ERROR.getCode(),
                             e.getMessage(), // 예외 메시지 포함
+                            null));
+        }
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponse<?>> getTestHistory(
+            @AuthenticationPrincipal UserDetails user,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "3") int size) {
+        try {
+            // 클라이언트로부터 받은 페이지 번호를 0부터 시작하도록 조정
+            page = page - 1;
+            TestsResponseDto.TestHistoryMainPageListDto results = testsService.getTestHistory(usersService.getUserId(user), page, size);
+            return ResponseEntity.ok(ApiResponse.onSuccess(results));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(ErrorStatus.INTERNAL_SERVER_ERROR.getHttpStatus())
+                    .body(ApiResponse.onFailure(
+                            ErrorStatus.INTERNAL_SERVER_ERROR.getCode(),
+                            e.getMessage(),
+                            null));
+        }
+    }
+
+    @GetMapping("/history/{testId}")
+    public ResponseEntity<ApiResponse<?>> getTestById(@PathVariable Long testId, @AuthenticationPrincipal UserDetails user) {
+        try {
+            TestsResponseDto.TestResultDto result = testsService.getTestById(testId, usersService.getUserId(user));
+            return ResponseEntity.ok(ApiResponse.onSuccess(result));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(ErrorStatus.INTERNAL_SERVER_ERROR.getHttpStatus())
+                    .body(ApiResponse.onFailure(
+                            ErrorStatus.INTERNAL_SERVER_ERROR.getCode(),
+                            e.getMessage(),
                             null));
         }
     }

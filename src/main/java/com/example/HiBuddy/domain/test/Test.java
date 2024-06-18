@@ -1,7 +1,9 @@
 package com.example.HiBuddy.domain.test;
 
+import com.example.HiBuddy.domain.script.Scripts;
 import com.example.HiBuddy.domain.user.Users;
 import com.example.HiBuddy.global.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,8 +31,15 @@ public class Test extends BaseEntity {
     private String pitchLevel;
     private int pronunciationScore;
 
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private Users user;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_id")
+    private Scripts script;  // 추가된 부분
 
 }

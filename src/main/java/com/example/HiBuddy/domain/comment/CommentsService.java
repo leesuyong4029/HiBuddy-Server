@@ -59,7 +59,7 @@ public class CommentsService {
         Comments newComment = CommentsConverter.toCommentEntity(user, post, request);
         commentsRepository.save(newComment);
 
-        return CommentsConverter.toCommentInfoResultDto(newComment, post, user, getCreatedAt(newComment.getCreatedAt()), true);
+        return CommentsConverter.toCommentInfoResultDto(newComment, post, user, getCreatedAt(newComment.getCreatedAt()), false);
     }
 
     // 댓글 조회 API
