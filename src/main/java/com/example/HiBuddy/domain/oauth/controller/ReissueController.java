@@ -1,6 +1,5 @@
 package com.example.HiBuddy.domain.oauth.controller;
 
-import com.example.HiBuddy.domain.oauth.jwt.refreshtoken.RefreshTokenRepository;
 import com.example.HiBuddy.domain.oauth.jwt.token.TokenService;
 import com.example.HiBuddy.global.response.ApiResponse;
 import com.example.HiBuddy.global.response.code.resultCode.SuccessStatus;
