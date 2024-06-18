@@ -59,7 +59,7 @@ public class CommentsService {
         Comments newComment = CommentsConverter.toCommentEntity(user, post, request);
         commentsRepository.save(newComment);
 
-        return CommentsConverter.toCommentInfoResultDto(newComment, post, user, getCreatedAt(newComment.getCreatedAt()), false);
+        return CommentsConverter.toCommentInfoResultDto(newComment, post, user, getCreatedAt(newComment.getCreatedAt()), true);
     }
 
     // 댓글 조회 API
@@ -87,7 +87,7 @@ public class CommentsService {
                     String createdAt = getCreatedAt(comment.getCreatedAt());
                     boolean isAuthor = user.getId().equals(comment.getUser().getId());
 
-                    return CommentsConverter.toCommentInfoResultDto(comment, comment.getPost(), user, createdAt, isAuthor);
+                    return CommentsConverter.toCommentInfoResultDto(comment, comment.getPost(), user, createdAt, false);
                 })
                 .collect(Collectors.toList());
 
