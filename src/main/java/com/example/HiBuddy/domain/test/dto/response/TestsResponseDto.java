@@ -32,6 +32,7 @@ public class TestsResponseDto {
         private String pitchLevel;
         private double pronunciationScore;
     }
+
     @Builder
     @Getter
     @NoArgsConstructor
@@ -55,5 +56,16 @@ public class TestsResponseDto {
         private boolean isLast;
         private int number;
         private int numberOfElements;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserResponseDto {
+        private Long userId;
+        private String username;
+        private String nickname;
     }
 }

@@ -69,7 +69,7 @@ public class UsersController {
     })
     public ApiResponse<SuccessStatus> deleteUser(@AuthenticationPrincipal UserDetails user) {
         try {
-            usersService.deleteUser(user);
+            usersService.deleteUser(usersService.getUserId(user));
             return ApiResponse.onSuccess(SuccessStatus.USER_DELETE_SUCCESS);
         } catch (Exception e) {
             return ApiResponse.onFailure(ErrorStatus.USER_DELETE_FAIL.getCode(), ErrorStatus.USER_DELETE_FAIL.getMessage(), null);

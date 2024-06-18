@@ -70,10 +70,9 @@ public class UsersService {
 
 
     @Transactional
-    public void deleteUser(UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        Users user = usersRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
+    public void deleteUser(Long userId) {
+        Users user = usersRepository.findUsersById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User with userId " + userId + " not found"));
         usersRepository.delete(user);
     }
 
@@ -215,5 +214,3 @@ public class UsersService {
     }
 
 }
-
-
