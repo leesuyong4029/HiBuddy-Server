@@ -31,6 +31,25 @@ public class TestsResponseDto {
         private double basePitch;
         private String pitchLevel;
         private double pronunciationScore;
+        private UserResponseDto user;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TestHistoryDto {
+        private Long testId;
+        private Long scriptId;
+        private String scriptName;
+        private String testDate;
+        private String difficulty;
+        private String recognizedText;
+        private double pitch;
+        private double basePitch;
+        private String pitchLevel;
+        private double pronunciationScore;
     }
 
     @Builder

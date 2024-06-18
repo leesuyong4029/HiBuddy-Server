@@ -37,11 +37,11 @@ public class TestsController {
             TestsResponseDto.TestResultDto resultDto = testsService.performTest(userId, scriptId, audioFile);
             return ResponseEntity.ok(ApiResponse.onSuccess(resultDto));
         } catch (Exception e) {
-            e.printStackTrace(); // 로그에 예외 정보 출력
+            e.printStackTrace();
             return ResponseEntity.status(ErrorStatus.INTERNAL_SERVER_ERROR.getHttpStatus())
                     .body(ApiResponse.onFailure(
                             ErrorStatus.INTERNAL_SERVER_ERROR.getCode(),
-                            e.getMessage(), // 예외 메시지 포함
+                            e.getMessage(),
                             null));
         }
     }
@@ -52,7 +52,6 @@ public class TestsController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "3") int size) {
         try {
-            // 클라이언트로부터 받은 페이지 번호를 0부터 시작하도록 조정
             page = page - 1;
             TestsResponseDto.TestHistoryMainPageListDto results = testsService.getTestHistory(usersService.getUserId(user), page, size);
             return ResponseEntity.ok(ApiResponse.onSuccess(results));
@@ -69,7 +68,7 @@ public class TestsController {
     @GetMapping("/history/{testId}")
     public ResponseEntity<ApiResponse<?>> getTestById(@PathVariable Long testId, @AuthenticationPrincipal UserDetails user) {
         try {
-            TestsResponseDto.TestResultDto result = testsService.getTestById(testId, usersService.getUserId(user));
+            TestsResponseDto.TestHistoryDto result = testsService.getTestById(testId, usersService.getUserId(user));
             return ResponseEntity.ok(ApiResponse.onSuccess(result));
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,4 +80,5 @@ public class TestsController {
         }
     }
 }
+
 
