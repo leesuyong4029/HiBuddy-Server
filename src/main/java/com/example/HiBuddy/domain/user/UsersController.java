@@ -1,7 +1,5 @@
 package com.example.HiBuddy.domain.user;
 
-import com.example.HiBuddy.domain.image.Images;
-import com.example.HiBuddy.domain.image.dto.response.ImagesResponseDto;
 import com.example.HiBuddy.domain.post.dto.response.PostsResponseDto;
 import com.example.HiBuddy.domain.scrap.response.ScrapsResponseDto;
 import com.example.HiBuddy.domain.user.dto.request.UsersRequestDto;
@@ -22,8 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Collections;
 
 @RestController
 @RequiredArgsConstructor

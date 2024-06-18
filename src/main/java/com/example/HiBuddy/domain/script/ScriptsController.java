@@ -6,12 +6,10 @@ import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
 import com.example.HiBuddy.global.response.code.resultCode.SuccessStatus;
 import com.example.HiBuddy.global.response.exception.handler.ScriptsHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/tests")
