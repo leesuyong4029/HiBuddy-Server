@@ -5,7 +5,6 @@ import com.example.HiBuddy.domain.user.UsersService;
 import com.example.HiBuddy.global.response.code.resultCode.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,9 +14,6 @@ import com.example.HiBuddy.global.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.nio.file.attribute.UserPrincipal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/tests")
