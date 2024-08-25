@@ -1,22 +1,24 @@
-# HiBuddy-BE
-## 협업규칙
-### 1. 브랜치 규칙
+# HiBuddy
 
-feat/#이슈번호-기능요약
+> 국제학생 커뮤니티 서비스 하이버디 
 
-예시 : feat/#12-login
+## 📖 Description
+국제학생들의 정보 격차를 해소하고 한국어 발음평가를 진행할 수 있습니다. 
 
-### 2. Commit Message
-- feat : 새로운 기능 추가
-- fix : 버그 수정, 기능 수정
-- docs : 문서 수정
-- refactor : 코드 리팩토링 (변수명 수정 등)
-- test : 테스트 코드, 리팩토링 테스트 코드 추가
-- style : 코드 스타일 변경, 코드 자체 변경이 없는 경우
-- remove : 파일 또는 코드, 리소스 제거
-- resource : 이미지 리소스, prefab 등의 코드와 상관없는 리소스 추가
+스레드를 이용해 다양한 정보를 공유하고, 자신의 한국어 발음 능력을 측정할 수 있습니다! 
 
-### 3. Pull Request
-dev <- feat/#이슈번호-기능요약
+## :baby_chick: Demo
+<p float = "left">
+  <img src = "https://github.com/user-attachments/assets/8c2f9ddb-3382-4f04-8f6e-065c687e9472" width = 200 />
 
-## ERD 
+## ⭐ Main Feature
+
+## 🔧 Stack
+
+## 🔨 Server Architecture
+
+## ⚒ CI/CD
+
+## 👨‍💻 Role & Contribution
+
+## 👨‍👩‍👧‍👦 Developer
