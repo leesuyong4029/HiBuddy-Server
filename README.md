@@ -37,10 +37,11 @@
 - **Library & Framework** : SpringBoot
 - **Database** : AWS RDS (MySQL)
 - **ORM** : JPA
-- **Deploy"" : AWS EC2, Nginx 
+- **Deploy** : AWS EC2, Nginx 
 
 
 ## 🔨 Server Architecture
+![image](https://github.com/user-attachments/assets/8a47d2e9-9645-476f-a3a1-16d723d029ec)
 
 ## ⚒ CI/CD
 
