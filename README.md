@@ -14,6 +14,16 @@
 <img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/68c14439-e024-43be-b5a4-6cdf35264eb2"/>
 </div>
 
+<div style="display:flex; flex-wrap:wrap; gap:2px ">
+<img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/b2ebf408-c62e-457f-b418-bedd56acf1a8"/>
+<img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/f855a818-79e2-48d2-bf5d-30db572cbebe"/>
+<img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/cdb09410-90c6-4bf6-ba1e-5c7989c1267f"/>
+<img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/6726b432-5c80-459c-ac27-9a2ff25b5392"/>
+</div>
+
+<img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/914beb18-3e31-44b1-a67d-f6702b4e1390"/>
+</p>
+
 ## 주요 기능
 ### 온보딩 기능
 
