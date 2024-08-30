@@ -8,12 +8,14 @@
 스레드에서 게시글, 댓글, 이미지 등을 통해 다양한 정보를 공유하고, 자신의 한국어 발음 능력을 측정할 수 있습니다! 
 
 ## :baby_chick: Demo
+### 회원 기능 및 온보딩 
 <p float = "left">
-  <div style="display:flex; flex-wrap:wrap; gap:2px ">
+<div style="display:flex; flex-wrap:wrap; gap:2px ">
 <img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/c53c61f5-5bd4-469a-8306-9dcc41ac1e2b"/>
 <img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/68c14439-e024-43be-b5a4-6cdf35264eb2"/>
 </div>
 
+### 스레드 (Threads)
 <div style="display:flex; flex-wrap:wrap; gap:2px ">
 <img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/b2ebf408-c62e-457f-b418-bedd56acf1a8"/>
 <img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/f855a818-79e2-48d2-bf5d-30db572cbebe"/>
@@ -21,6 +23,7 @@
 <img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/6726b432-5c80-459c-ac27-9a2ff25b5392"/>
 </div>
 
+### 한국어 발음 테스트
 <img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/914beb18-3e31-44b1-a67d-f6702b4e1390"/>
 </p>
 
@@ -37,8 +40,9 @@
 - 페이징 기능
 
 ### 한국어 발음 평가 기능 
-- 한국어 음성 인식 후 발음점수 평가 (Levenshtein Distance 알고리즘 & Naver Clova Speech API 사용)
-- 스크립트 선택 기능 
+- 한국어 음성 인식 후 발음점수 평가 (Levenshtein Distance 알고리즘 & Naver Clova Speech API 사용), wav 파일 전송 및 기록 
+- 난이도별 스크립트 선택 기능
+- 발음 & Pitch 점수 확인  
 
 ### 기타 기능
 - 마이페이지
