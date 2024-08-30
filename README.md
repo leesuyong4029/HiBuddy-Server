@@ -9,7 +9,10 @@
 
 ## :baby_chick: Demo
 <p float = "left">
-  <img src = "https://github.com/user-attachments/assets/8c2f9ddb-3382-4f04-8f6e-065c687e9472" width = 200 />
+  <div style="display:flex; flex-wrap:wrap; gap:2px ">
+<img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/c53c61f5-5bd4-469a-8306-9dcc41ac1e2b"/>
+<img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/68c14439-e024-43be-b5a4-6cdf35264eb2"/>
+</div>
 
 ## ⭐ Main Feature
 ### 온보딩 기능
