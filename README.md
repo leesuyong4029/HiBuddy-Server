@@ -5,9 +5,9 @@
 ## 📖 Description
 국제학생들의 정보 격차를 해소하고 한국어 발음평가를 진행할 수 있습니다. 
 
-스레드에서 게시글, 댓글, 이미지 등을 통해 다양한 정보를 공유하고, 자신의 한국어 발음 능력을 측정할 수 있습니다! 
+스레드에서 게시글, 댓글, 이미지 등을 통해 다양한 정보를 공유하고, 자신의 한국어 발음 능력을 측정할 수 있습니다.
 
-## :baby_chick: Demo
+## Demo
 ### 회원 기능 및 온보딩 
 <p float = "left">
 <div style="display:flex; flex-wrap:wrap; gap:2px ">
@@ -60,8 +60,6 @@
 ## 🔨 Server Architecture
 ![image](https://github.com/user-attachments/assets/8a47d2e9-9645-476f-a3a1-16d723d029ec)
 
-## ⚒ CI/CD
-
 ## 👨‍💻 Role & Contribution
 
 **Backend**
@@ -70,7 +68,7 @@
 - 한국어 발음평가 API 개발 (Naver Clova Speech API 연동)
 
 **Devops**
-- AWS Cloud 9을 통한 EC2, VPC, RDS 설정
+- AWS EC2, VPC, RDS 설정
 - AWS S3 설정
 - Nginx를 이용한 EC2 무중단 배포 수행
 
