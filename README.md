@@ -14,7 +14,7 @@
 <img width=300 src="https://github.com/Team-HiBuddy/HiBuddy-FE/assets/116625502/68c14439-e024-43be-b5a4-6cdf35264eb2"/>
 </div>
 
-## ⭐ Main Feature
+## 주요 기능
 ### 온보딩 기능
 
 ### 회원가입 및 로그인 
