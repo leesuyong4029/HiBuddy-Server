@@ -75,7 +75,7 @@
 **etc**
 - 프로젝트 기획 및 개발 일정 및 이슈 관리 
 
-## 👨‍👩‍👧‍👦 Developer
+## Developer
 * **이수용** ([leesuyong4029](https://github.com/leesuyong4029)) 
 * **이강산** ([guridaek](https://github.com/guridaek)) 
 * **오영수** ([YoungSuOh](https://github.com/YoungSuOh))
