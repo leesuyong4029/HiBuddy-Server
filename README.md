@@ -2,7 +2,7 @@
 
 > 국제학생 커뮤니티 서비스 하이버디 
 
-## 📖 Description
+## Description
 국제학생들의 정보 격차를 해소하고 한국어 발음평가를 진행할 수 있습니다. 
 
 스레드에서 게시글, 댓글, 이미지 등을 통해 다양한 정보를 공유하고, 자신의 한국어 발음 능력을 측정할 수 있습니다.
@@ -49,7 +49,7 @@
 - 댓글, 게시글 좋아요 기능
 - 댓글, 게시글 스크랩 생성/해제 
 
-## 🔧 Stack
+## Stack
 - **Language** : Java
 - **Library & Framework** : SpringBoot
 - **Database** : AWS RDS (MySQL)
@@ -57,10 +57,10 @@
 - **Deploy** : AWS EC2, Nginx 
 
 
-## 🔨 Server Architecture
+## Server Architecture
 ![image](https://github.com/user-attachments/assets/8a47d2e9-9645-476f-a3a1-16d723d029ec)
 
-## 👨‍💻 Role & Contribution
+## Role & Contribution
 
 **Backend**
 - 전체 아키텍처 구성
