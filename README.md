@@ -56,6 +56,9 @@
 - **ORM** : JPA
 - **Deploy** : AWS EC2, Nginx 
 
+## ERD
+<img width="1297" height="835" alt="image" src="https://github.com/user-attachments/assets/c0eb8cd9-96fe-4cbe-bd78-36010784c7f4" />
+
 
 ## Server Architecture
 ![image](https://github.com/user-attachments/assets/8a47d2e9-9645-476f-a3a1-16d723d029ec)
